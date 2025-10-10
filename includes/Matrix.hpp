@@ -4,9 +4,7 @@
 
 /**
  * @brief Represents a mathematical matrix of m x n dimensions.
- * 
  * @tparam T The type of the elements in the matrix.
- * 
  * @note The matrix is stored in column-major order.
  */
 template<typename T>
@@ -33,6 +31,7 @@ class Matrix {
 		/**
 		 * @brief Adds two matrices.
 		 * @param other The other matrix to add.
+		 * @throw std::invalid_argument If the matrices are not of the same shape.
 		 * @note Time complexity : O(n)
 		 * @note Space complexity : O(1)
 		 * @note Allowed math functions : None
@@ -48,6 +47,7 @@ class Matrix {
 		/**
 		 * @brief Substract two matrices.
 		 * @param other The other matrix to subtract.
+		 * @throw std::invalid_argument If the matrices are not of the same shape.
 		 * @note Time complexity : O(n)
 		 * @note Space complexity : O(1)
 		 * @note Allowed math functions : None

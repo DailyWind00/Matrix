@@ -4,7 +4,6 @@
 
 /**
  * @brief Represents a mathematical vector of n dimensions.
- * 
  * @tparam T The type of the elements in the vector.
  */
 template<typename T>
@@ -23,6 +22,7 @@ class Vector {
 		/**
 		 * @brief Adds two vectors.
 		 * @param other The other vector to add.
+		 * @throw std::invalid_argument If the vectors are not of the same size.
 		 * @note Time complexity : O(n)
 		 * @note Space complexity : O(1)
 		 * @note Allowed math functions : None
@@ -38,6 +38,7 @@ class Vector {
 		/**
 		 * @brief Substract two vectors.
 		 * @param other The other vector to subtract.
+		 * @throw std::invalid_argument If the vectors are not of the same size.
 		 * @note Time complexity : O(n)
 		 * @note Space complexity : O(1)
 		 * @note Allowed math functions : None
@@ -77,6 +78,7 @@ class Vector {
 		 * @param rows The number of rows in the resulting matrix.
 		 * @param cols The number of columns in the resulting matrix.
 		 * @return Matrix<T> The reshaped matrix.
+		 * @throw std::invalid_argument If the product of rows and cols does not equal the size of the vector.
 		 */
 		Matrix<T> reshape(size_t rows, size_t cols) const {
 			if (rows * cols != size())
@@ -118,6 +120,7 @@ std::ostream& operator<<(std::ostream& os, const Vector<T>& vec) {
  * @param vectors The vectors to combine.
  * @param scalars The scalars to multiply each vector by.
  * @return Vector<T> The resulting vector from the linear combination.
+ * @throw std::invalid_argument If the sizes of the vectors and scalars lists do not match, or if the vectors are not of the same size.
  * @note Time complexity : O(n)
  * @note Space complexity : O(n)
  * @note Allowed math functions : fma
@@ -147,4 +150,33 @@ Vector<T> linear_combination(std::initializer_list<Vector<T>> vectors, std::init
     }
 
     return result;
+}
+
+/**
+ * @brief Performs linear interpolation between two vectors.
+ * @details The function computes a point along the line connecting vectors u and v, based on the interpolation factor t.
+ *          When t = 0, the result is u; when t = 1, the result is v; for values between 0 and 1, the result is a blend of u and v.
+ * @tparam T The type of the elements in the vectors and the interpolation factor.
+ * @param u The first vector.
+ * @param v The second vector.
+ * @param t The interpolation factor.
+ * @return Vector<T> The interpolated vector.
+ * @throw std::invalid_argument If the vectors are not of the same size.
+ * @note Time complexity : O(n)
+ * @note Space complexity : O(n)
+ * @note Allowed math functions : fma
+ * 
+ * @see https://en.wikipedia.org/wiki/Linear_interpolation
+ */
+template<typename T>
+Vector<T> lerp(const Vector<T>& u, const Vector<T>& v, const T& t) {
+	if (u.size() != v.size())
+		throw std::invalid_argument("Both vectors must be of the same size.");
+
+	Vector<T> result(u.size());
+
+	for (size_t i = 0; i < u.size(); i++)
+		result[i] = std::fma(t, v[i] - u[i], u[i]);
+
+	return result;
 }

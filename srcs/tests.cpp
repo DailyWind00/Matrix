@@ -44,3 +44,15 @@ TEST_CASE("Ex01 linear_combination") {
 	CHECK_THROWS(linear_combination({vec1}, {})); // Mismatched sizes
 	CHECK_THROWS(linear_combination({vec1, vec6}, {1.0f, 2.0f})); // Mismatched vector sizes
 }
+
+TEST_CASE("Ex02 lerp") {
+	Vector<f32> u = {0, 0, 0};
+	Vector<f32> v = {10, 10, 10};
+
+	CHECK(lerp(u, v, 0.0f) == Vector<f32>({0, 0, 0}));
+	CHECK(lerp(u, v, 1.0f) == Vector<f32>({10, 10, 10}));
+	CHECK(lerp(u, v, 0.5f) == Vector<f32>({5, 5, 5}));
+	CHECK(lerp(u, v, 0.25f) == Vector<f32>({2.5f, 2.5f, 2.5f}));
+	CHECK(lerp(u, v, 0.75f) == Vector<f32>({7.5f, 7.5f, 7.5f}));
+	CHECK_THROWS(lerp(u, Vector<f32>({1, 2}), 0.5f)); // Mismatched sizes
+}
