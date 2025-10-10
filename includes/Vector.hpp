@@ -123,22 +123,28 @@ std::ostream& operator<<(std::ostream& os, const Vector<T>& vec) {
  * @note Allowed math functions : fma
  */
 template<typename T>
-Vector<T> linear_combination(const std::vector<Vector<T>>& vectors, const std::vector<T>& scalars) {
-	if (vectors.size() != scalars.size())
-		throw std::invalid_argument("Vectors and scalars lists must be of the same size.");
+Vector<T> linear_combination(std::initializer_list<Vector<T>> vectors, std::initializer_list<T> scalars) {
+    if (vectors.size() != scalars.size())
+        throw std::invalid_argument("Vectors and scalars lists must be of the same size.");
 
-	if (vectors.empty())
-		return Vector<T>();
+    if (vectors.size() == 0)
+        return Vector<T>();
 
-	Vector<T> result(vectors[0].size());
+    auto vecIt = vectors.begin();
+    auto scaIt = scalars.begin();
 
-	for (size_t i = 0; i < vectors.size(); i++) {
-		if (vectors[i].size() != result.size())
-			throw std::invalid_argument("All vectors must be of the same size.");
+    Vector<T> result(vecIt->size());
 
-		for (size_t j = 0; j < vectors[0].size(); j++)
-			result[j] = std::fma(scalars[i], vectors[i][j], result[j]);
-	}
+    while (vecIt != vectors.end() && scaIt != scalars.end()) {
+        if (vecIt->size() != result.size())
+            throw std::invalid_argument("All vectors must be of the same size.");
 
-	return result;
+        for (size_t j = 0; j < result.size(); ++j)
+            result[j] = std::fma(*scaIt, (*vecIt)[j], result[j]);
+
+        ++vecIt;
+        ++scaIt;
+    }
+
+    return result;
 }
