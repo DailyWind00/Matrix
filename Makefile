@@ -3,7 +3,7 @@ NAME = Matrix
 CXX = c++
 CXXFLAGS = -Wall -Wextra -Wno-unknown-pragmas -std=c++17 -g
 INCLUDES = -I./includes
-SRCS = ./srcs/main.cpp
+SRCS = ./srcs/tests.cpp
 OBJS = $(SRCS:.cpp=.o)
 
 all: $(NAME)

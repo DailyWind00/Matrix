@@ -39,7 +39,7 @@ class Matrix {
 		 */
 		void add(const Matrix<T>& other) {
 			if (shape() != other.shape())
-				throw std::invalid_argument("Matrices must have the same shape");
+				throw std::invalid_argument("Matrices must have the same shape.");
 
 			for (size_t i = 0; i < rows(); ++i)
 				data[i].add(other[i]); // Reuse Vector's add method
@@ -54,7 +54,7 @@ class Matrix {
 		 */
 		void sub(const Matrix<T>& other) {
 			if (shape() != other.shape())
-				throw std::invalid_argument("Matrices must have the same shape");
+				throw std::invalid_argument("Matrices must have the same shape.");
 
 			for (size_t i = 0; i < rows(); ++i)
 				data[i].sub(other[i]); // Reuse Vector's sub method

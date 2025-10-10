@@ -14,6 +14,7 @@ class Vector {
 
 	public:
 		Vector() = default;
+		Vector(const size_t& size) : data(size) {}
 		Vector(std::initializer_list<T> list) : data(list) {}
 		Vector(const std::vector<T>& other) : data(other) {}
 
@@ -96,6 +97,7 @@ class Vector {
 
 		T& operator[](size_t index) { return data[index]; }
 		const T& operator[](size_t index) const { return data[index]; }
+		bool operator==(const Vector<T>& other) const { return data == other.data; }
 
 		# pragma endregion
 };
@@ -107,4 +109,36 @@ std::ostream& operator<<(std::ostream& os, const Vector<T>& vec) {
 		os << vec[i] << (i + 1 < vec.size() ? ", " : "");
 	os << "]";
 	return os;
+}
+
+/**
+ * @brief Computes the linear combination of given vectors and scalars.
+ * @details This mean that the function computes the sum of each vector multiplied by its corresponding scalar.
+ * @tparam T The type of the elements in the vectors and scalars.
+ * @param vectors The vectors to combine.
+ * @param scalars The scalars to multiply each vector by.
+ * @return Vector<T> The resulting vector from the linear combination.
+ * @note Time complexity : O(n)
+ * @note Space complexity : O(n)
+ * @note Allowed math functions : fma
+ */
+template<typename T>
+Vector<T> linear_combination(const std::vector<Vector<T>>& vectors, const std::vector<T>& scalars) {
+	if (vectors.size() != scalars.size())
+		throw std::invalid_argument("Vectors and scalars lists must be of the same size.");
+
+	if (vectors.empty())
+		return Vector<T>();
+
+	Vector<T> result(vectors[0].size());
+
+	for (size_t i = 0; i < vectors.size(); i++) {
+		if (vectors[i].size() != result.size())
+			throw std::invalid_argument("All vectors must be of the same size.");
+
+		for (size_t j = 0; j < vectors[0].size(); j++)
+			result[j] = std::fma(scalars[i], vectors[i][j], result[j]);
+	}
+
+	return result;
 }
