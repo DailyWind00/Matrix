@@ -123,3 +123,20 @@ TEST_CASE("Ex06 cross product") {
 	CHECK_THROWS(cross_product(vec1, Vector<f32>({1, 2}))); // Mismatched sizes
 	CHECK_THROWS(cross_product(Vector<f32>({1, 2}), Vector<f32>({1, 2}))); // Not 3D vectors
 }
+
+TEST_CASE("Ex07 linear map & Matrix multiplication") {
+	Matrix<f32> mat1 = {{1, 2, 3}, {4, 5, 6}};
+	Vector<f32> vec1 = {7, 8, 9};
+	Matrix<f32> mat2 = {{7, 8}, {9, 10}, {11, 12}};
+	Matrix<f32> mat3 = {{1, 2}, {3, 4}};
+	Matrix<f32> mat4 = {{5, 6}, {7, 8}};
+
+	CHECK(mat1.mul_vec(vec1) == Vector<f32>({50, 122})); // [1*7+2*8+3*9, 4*7+5*8+6*9]
+	CHECK_THROWS(mat1.mul_vec(Vector<f32>({1, 2}))); // Mismatched sizes
+
+	CHECK(mat1.mul_mat(mat2) == Matrix<f32>({{58, 64}, {139, 154}})); // [[58, 64], [139, 154]]
+	CHECK_THROWS(mat1.mul_mat(mat3)); // Mismatched shapes
+
+	CHECK(mat3.mul_mat(mat4) == Matrix<f32>({{19, 22}, {43, 50}})); // [[19, 22], [43, 50]]
+	CHECK_THROWS(mat3.mul_mat(mat1)); // Mismatched shapes
+}

@@ -21,10 +21,11 @@ class Matrix {
 					{ 0, 0, 0, value }};
 		}
 		Matrix(std::initializer_list<Vector<T>> init) {
-			for (const auto& row : init)
-				data.emplace_back(row);
+			for (const auto& col : init)
+				data.emplace_back(col);
 		}
 		Matrix(std::vector<Vector<T>> other) : data(other) {}
+		Matrix(const size_t& cols, const size_t& rows) : data(cols, Vector<T>(rows)) {}
 
 		/**
 		 * @brief Adds two matrices.
@@ -38,7 +39,7 @@ class Matrix {
 			if (shape() != other.shape())
 				throw std::invalid_argument("Matrices must have the same shape.");
 
-			for (size_t i = 0; i < rows(); ++i)
+			for (size_t i = 0; i < cols(); ++i)
 				data[i].add(other[i]); // Reuse Vector's add method
 		}
 
@@ -54,7 +55,7 @@ class Matrix {
 			if (shape() != other.shape())
 				throw std::invalid_argument("Matrices must have the same shape.");
 
-			for (size_t i = 0; i < rows(); ++i)
+			for (size_t i = 0; i < cols(); ++i)
 				data[i].sub(other[i]); // Reuse Vector's sub method
 		}
 
@@ -66,8 +67,53 @@ class Matrix {
 		 * @note Allowed math functions : None
 		 */
 		void scl(const T& scalar) {
-			for (Vector<T>& row : data)
-				row.scl(scalar); // Reuse Vector's scl method
+			for (Vector<T>& col : data)
+				col.scl(scalar); // Reuse Vector's scl method
+		}
+
+		/**
+		 * @brief Multiplies the matrix by a vector.
+		 * @param other The vector to multiply.
+		 * @return Vector<T> The resulting vector.
+		 * @throw std::invalid_argument If the matrix rows do not match the vector size.
+		 * @note Time complexity : O(m*n) matrix rows * matrix cols
+		 * @note Space complexity : O(n)
+		 * @note Allowed math functions : fma
+		 */
+		Vector<T> mul_vec(const Vector<T>& other) {
+			if (rows() != other.size())
+				throw std::invalid_argument("Matrix rows must match vector size");
+
+			Vector<T> result(cols());
+
+			for (size_t c = 0; c < cols(); c++) {
+				for (size_t r = 0; r < rows(); r++) {
+					if constexpr (IS_ARITHMETIC(T))
+						result[c] = std::fma(data[c][r], other[r], result[c]);
+					else
+						result[c] += data[c][r] * other[r];
+				}
+			}
+
+			return result;
+		}
+
+		Matrix<T> mul_mat(const Matrix<T>& other) {
+			if (cols() != other.rows())
+				throw std::invalid_argument("Matrix A columns must match Matrix B rows");
+
+			Matrix<T> result(cols(), other.rows());
+
+			for (size_t c = 0; c < cols(); c++) {
+				for (size_t r = 0; r < other.rows(); r++) {
+					if constexpr (IS_ARITHMETIC(T))
+						result[c][r] = std::fma(data[c][r], other[r][c], result[c][r]);
+					else
+						result[c][r] += data[c][r] * other[r][c];
+				}
+			}
+
+			return result;
 		}
 
 		# pragma region Utils
@@ -76,13 +122,13 @@ class Matrix {
 		 * @brief Returns the number of rows in the matrix.
 		 * @return size_t The number of rows.
 		 */
-		inline size_t rows() const { return data.size(); }
+		inline size_t rows() const { return data.empty() ? 0 : data[0].size(); }
 
 		/**
 		 * @brief Returns the number of columns in the matrix.
 		 * @return size_t The number of columns.
 		 */
-		inline size_t cols() const { return data.empty() ? 0 : data[0].size(); }
+		inline size_t cols() const { return data.size(); }
 
 		/**
 		 * @brief Returns the shape of the matrix as a pair (rows, cols).
@@ -98,10 +144,10 @@ class Matrix {
 			std::vector<T> vec;
 			vec.reserve(rows() * cols());
 
-			for (const Vector<T>& row : data)
-				for (size_t j = 0; j < row.size(); ++j)
-					vec.push_back(row[j]);
-					
+			for (const Vector<T>& col : data)
+				for (size_t j = 0; j < col.size(); ++j)
+					vec.push_back(col[j]);
+
 			return Vector<T>(vec);
 		}
 
@@ -122,9 +168,8 @@ template<typename T>
 std::ostream& operator<<(std::ostream& os, const Matrix<T>& mat) {
 	os << "{";
 	for (size_t i = 0; i < mat.rows(); ++i) {
-		if (i) os << " ";
+		if (i) os << ", ";
 		os << mat[i];
-		if (i + 1 < mat.rows()) os << "\n";
 	}
 	os << "}";
 	return os;
