@@ -29,7 +29,7 @@ TEST_CASE("Ex00 Vector & Matrix add/sub/scl") {
 	CHECK(mat1 == Matrix<f32>({{2, 4, 6}, {8, 10, 12}}));
 }
 
-TEST_CASE("Ex01 linear_combination") {
+TEST_CASE("Ex01 linear combination") {
 	Vector<f32> vec1 = {1, 0, 0};
 	Vector<f32> vec2 = {0, 1, 0};
 	Vector<f32> vec3 = {0, 0, 1};
@@ -76,19 +76,35 @@ TEST_CASE("Ex04 norms") {
 	Vector<f32> vec3 = {0, 0, 0};
 	Vector<f32> vec4 = {1, -1, 1, -1};
 
-	CHECK(vec1.norm_1() == 7.0f);               // |3| + |4| = 7
-	CHECK(vec1.norm_2() == 5.0f);               // sqrt(3² + 4²) = 5
-	CHECK(vec1.norm_inf() == 4.0f);             // max(|3|, |4|) = 4
+	CHECK(vec1.norm_1() == 7.0f);             // |3| + |4| = 7
+	CHECK(vec1.norm() == 5.0f);               // sqrt(3² + 4²) = 5
+	CHECK(vec1.norm_inf() == 4.0f);           // max(|3|, |4|) = 4
 
-	CHECK(vec2.norm_1() == 6.0f);               // |-1| + |-2| + |-3| = 6
-	CHECK(vec2.norm_2() == f32(std::sqrt(14))); // sqrt(1² + 2² + 3²) = sqrt(14) in float
-	CHECK(vec2.norm_inf() == 3.0f);             // max(|-1|, |-2|, |-3|) = 3
+	CHECK(vec2.norm_1() == 6.0f);             // |-1| + |-2| + |-3| = 6
+	CHECK(vec2.norm() == f32(std::sqrt(14))); // sqrt(1² + 2² + 3²) = sqrt(14) in float
+	CHECK(vec2.norm_inf() == 3.0f);           // max(|-1|, |-2|, |-3|) = 3
 
-	CHECK(vec3.norm_1() == 0.0f);               // Zero vector
-	CHECK(vec3.norm_2() == 0.0f);
+	CHECK(vec3.norm_1() == 0.0f);             // Zero vector
+	CHECK(vec3.norm() == 0.0f);
 	CHECK(vec3.norm_inf() == 0.0f);
 
-	CHECK(vec4.norm_1() == 4.0f);               // |1| + |-1| + |1| + |-1| = 4
-	CHECK(vec4.norm_2() == 2.0f);               // sqrt(1² + (-1)² + 1² + (-1)²) = sqrt(4) = 2
-	CHECK(vec4.norm_inf() == 1.0f);             // max(|1|, |-1|) = 1
+	CHECK(vec4.norm_1() == 4.0f);             // |1| + |-1| + |1| + |-1| = 4
+	CHECK(vec4.norm() == 2.0f);               // sqrt(1² + (-1)² + 1² + (-1)²) = sqrt(4) = 2
+	CHECK(vec4.norm_inf() == 1.0f);           // max(|1|, |-1|) = 1
+}
+
+TEST_CASE("Ex05 cosine") {
+	Vector<f32> vec1 = {1, 0, 0};
+	Vector<f32> vec2 = {0, 1, 0};
+	Vector<f32> vec3 = {1, 1, 0};
+	Vector<f32> vec4 = {-1, -1, 0};
+	Vector<f32> vec5 = {1, 2, 3};
+	Vector<f32> vec6 = {4, 5, 6};
+
+	CHECK(angle_cos(vec1, vec1) == 1.0f);   // Same direction
+	CHECK(angle_cos(vec1, vec2) == 0.0f);   // Perpendicular
+	CHECK(angle_cos(vec3, vec4) == doctest::Approx(-1.0f));  // Opposite direction (not exactly -1 due to floating-point precision)
+	CHECK(angle_cos(vec5, vec6) == 0.9746318f); // General case
+	CHECK_THROWS(angle_cos(vec1, Vector<f32>({1, 2}))); // Mismatched sizes
+	CHECK_THROWS(angle_cos(vec1, Vector<f32>({0, 0, 0}))); // Zero-length vector
 }

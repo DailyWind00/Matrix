@@ -83,20 +83,37 @@ class Vector {
 		}
 
 		/**
+		 * @brief Divide the vector by a scalar.
+		 * @param scalar The scalar to divide the vector by.
+		 * @throw std::logic_error If the scalar is zero.
+		 * @note Time complexity : O(n)
+		 * @note Space complexity : O(1)
+		 * @note Allowed math functions : None
+		 */
+		void div(const T& scalar) {
+			if (scalar == T(0))
+				throw std::logic_error("Division by zero is not allowed.");
+
+			for (T& i : data)
+				i /= scalar;
+		}
+
+		/**
 		 * @brief Computes the dot product of two vectors.
 		 * @details Work with both real and complex numbers.
 		 * @param other The other vector to compute the dot product with.
-		 * @return T The dot product result.
+		 * @return The dot product result.
 		 * @throw std::invalid_argument If the vectors are not of the same size.
 		 * @note Time complexity : O(n)
 		 * @note Space complexity : O(1)
 		 * @note Allowed math functions : fma
 		 */
-		T dot(const Vector<T>& other) {
+		auto dot(const Vector<T>& other) const {
 			if (size() != other.size())
 				throw std::invalid_argument("Vectors must have the same size");
 
-			T result = T();
+			using R = TO_REAL<T>;
+			R result = R(0);
 
 			for (size_t i = 0; i < size(); i++) {
 				if constexpr (IS_ARITHMETIC(T)) {
@@ -141,7 +158,7 @@ class Vector {
 		 * @note Space complexity : O(1)
 		 * @note Allowed math functions : fma, pow
 		 */
-		auto norm_2() const {
+		auto norm() const {
 			using R = TO_REAL<T>;
 			R result = R(0);
 

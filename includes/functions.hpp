@@ -70,3 +70,18 @@ Vector<T> lerp(const Vector<T>& u, const Vector<T>& v, const T& t) {
 
 	return result;
 }
+
+template<typename T>
+auto angle_cos(const Vector<T>& u, const Vector<T>& v) {
+	if (u.size() != v.size())
+		throw std::invalid_argument("Both vectors must be of the same size.");
+
+	using R = TO_REAL<T>;
+	R uNorm = u.norm();
+	R vNorm = v.norm();
+
+	if (uNorm == R(0) || vNorm == R(0))
+		throw std::logic_error("Cannot compute angle with zero-length vector.");
+
+	return u.dot(v) / (uNorm * vNorm);
+}
