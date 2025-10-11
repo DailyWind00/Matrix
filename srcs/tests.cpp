@@ -108,3 +108,18 @@ TEST_CASE("Ex05 cosine") {
 	CHECK_THROWS(angle_cos(vec1, Vector<f32>({1, 2}))); // Mismatched sizes
 	CHECK_THROWS(angle_cos(vec1, Vector<f32>({0, 0, 0}))); // Zero-length vector
 }
+
+TEST_CASE("Ex06 cross product") {
+	Vector<f32> vec1 = {1, 0, 0};
+	Vector<f32> vec2 = {0, 1, 0};
+	Vector<f32> vec3 = {0, 0, 1};
+	Vector<f32> vec4 = {1, 2, 3};
+	Vector<f32> vec5 = {4, 5, 6};
+
+	CHECK(cross_product(vec1, vec2) == vec3); // Standard basis vectors
+	CHECK(cross_product(vec2, vec3) == vec1);
+	CHECK(cross_product(vec3, vec1) == vec2);
+	CHECK(cross_product(vec4, vec5) == Vector<f32>({-3, 6, -3})); // General case
+	CHECK_THROWS(cross_product(vec1, Vector<f32>({1, 2}))); // Mismatched sizes
+	CHECK_THROWS(cross_product(Vector<f32>({1, 2}), Vector<f32>({1, 2}))); // Not 3D vectors
+}

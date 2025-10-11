@@ -102,3 +102,33 @@ auto angle_cos(const Vector<T>& u, const Vector<T>& v) {
 
 	return u.dot(v) / (uNorm * vNorm);
 }
+
+/**
+ * @brief Computes the cross product of two 3-dimensional vectors.
+ * @details The cross product results in a vector that is perpendicular to both input vectors, following the right-hand rule.
+ * @tparam T The type of the elements in the vectors.
+ * @param u The first 3-dimensional vector.
+ * @param v The second 3-dimensional vector.
+ * @return Vector<T> The resulting vector from the cross product.
+ * @throw std::invalid_argument If either vector is not 3-dimensional.
+ * @note Time complexity : O(1)
+ * @note Space complexity : O(1)
+ * @note Allowed math functions : fma
+ * 
+ * @see https://en.wikipedia.org/wiki/Cross_product
+ */
+template<typename T>
+Vector<T> cross_product(const Vector<T>& u, const Vector<T>& v) {
+	if (IS_COMPLEX(T))
+		throw std::invalid_argument("Cross product exist only for real-valued vectors in 3 and 7 dimensions.");
+	if (u.size() != 3 || v.size() != 3)
+		throw std::invalid_argument("Vectors must be 3-dimensional.");
+	
+	Vector<T> result(3);
+
+	result[0] = std::fma(u[1], v[2], -(u[2] * v[1])); // u1*v2 - u2*v1
+	result[1] = std::fma(u[2], v[0], -(u[0] * v[2])); // u2*v0 - u0*v2
+	result[2] = std::fma(u[0], v[1], -(u[1] * v[0])); // u0*v1 - u1*v0
+
+	return result;
+}
