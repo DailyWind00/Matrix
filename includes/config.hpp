@@ -21,6 +21,7 @@ template<typename T> struct to_real<std::complex<T>> { using type = T; };
 template<typename T> using TO_REAL = typename to_real<T>::type;
 
 using f32 = float;
+using c32 = std::complex<float>;
 
 // forward declarations
 template<typename T> class Vector;
