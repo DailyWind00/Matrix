@@ -17,8 +17,6 @@ class Vector {
 		Vector(std::initializer_list<T> list) : data(list) {}
 		Vector(const std::vector<T>& other) : data(other) {}
 
-		# pragma region Operators
-
 		/**
 		 * @brief Adds two vectors.
 		 * @param other The other vector to add.
@@ -63,7 +61,38 @@ class Vector {
 				i *= scalar;
 		}
 
-		# pragma endregion
+		/**
+		 * @brief Computes the dot product of two vectors.
+		 * @details Work with both real and complex numbers.
+		 * @param other The other vector to compute the dot product with.
+		 * @return T The dot product result.
+		 * @throw std::invalid_argument If the vectors are not of the same size.
+		 * @note Time complexity : O(n)
+		 * @note Space complexity : O(1)
+		 * @note Allowed math functions : fma
+		 */
+		T dot(const Vector<T>& other) {
+			if (size() != other.size())
+				throw std::invalid_argument("Vectors must have the same size");
+
+			T result = T();
+
+			for (size_t i = 0; i < size(); i++) {
+				if constexpr (IS_ARITHMETIC(T)) {
+					// Real numbers: use FMA for precision
+					result = std::fma(data[i], other[i], result);
+				}
+				else if constexpr (IS_COMPLEX(T)) {
+					// Complex numbers: conjugate the first operand, no fma
+					result += std::conj(data[i]) * other[i];
+				}
+				else
+					// Fallback: generic multiply-add
+					result += data[i] * other[i];
+			}
+				
+			return result;
+		}
 
 		# pragma region Utils
 
@@ -111,72 +140,4 @@ std::ostream& operator<<(std::ostream& os, const Vector<T>& vec) {
 		os << vec[i] << (i + 1 < vec.size() ? ", " : "");
 	os << "]";
 	return os;
-}
-
-/**
- * @brief Computes the linear combination of given vectors and scalars.
- * @details This mean that the function computes the sum of each vector multiplied by its corresponding scalar.
- * @tparam T The type of the elements in the vectors and scalars.
- * @param vectors The vectors to combine.
- * @param scalars The scalars to multiply each vector by.
- * @return Vector<T> The resulting vector from the linear combination.
- * @throw std::invalid_argument If the sizes of the vectors and scalars lists do not match, or if the vectors are not of the same size.
- * @note Time complexity : O(n)
- * @note Space complexity : O(n)
- * @note Allowed math functions : fma
- */
-template<typename T>
-Vector<T> linear_combination(std::initializer_list<Vector<T>> vectors, std::initializer_list<T> scalars) {
-    if (vectors.size() != scalars.size())
-        throw std::invalid_argument("Vectors and scalars lists must be of the same size.");
-
-    if (vectors.size() == 0)
-        return Vector<T>();
-
-    auto vecIt = vectors.begin();
-    auto scaIt = scalars.begin();
-
-    Vector<T> result(vecIt->size());
-
-    while (vecIt != vectors.end() && scaIt != scalars.end()) {
-        if (vecIt->size() != result.size())
-            throw std::invalid_argument("All vectors must be of the same size.");
-
-        for (size_t j = 0; j < result.size(); ++j)
-            result[j] = std::fma(*scaIt, (*vecIt)[j], result[j]);
-
-        ++vecIt;
-        ++scaIt;
-    }
-
-    return result;
-}
-
-/**
- * @brief Performs linear interpolation between two vectors.
- * @details The function computes a point along the line connecting vectors u and v, based on the interpolation factor t.
- *          When t = 0, the result is u; when t = 1, the result is v; for values between 0 and 1, the result is a blend of u and v.
- * @tparam T The type of the elements in the vectors and the interpolation factor.
- * @param u The first vector.
- * @param v The second vector.
- * @param t The interpolation factor.
- * @return Vector<T> The interpolated vector.
- * @throw std::invalid_argument If the vectors are not of the same size.
- * @note Time complexity : O(n)
- * @note Space complexity : O(n)
- * @note Allowed math functions : fma
- * 
- * @see https://en.wikipedia.org/wiki/Linear_interpolation
- */
-template<typename T>
-Vector<T> lerp(const Vector<T>& u, const Vector<T>& v, const T& t) {
-	if (u.size() != v.size())
-		throw std::invalid_argument("Both vectors must be of the same size.");
-
-	Vector<T> result(u.size());
-
-	for (size_t i = 0; i < u.size(); i++)
-		result[i] = std::fma(t, v[i] - u[i], u[i]);
-
-	return result;
 }

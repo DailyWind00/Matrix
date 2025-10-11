@@ -26,8 +26,6 @@ class Matrix {
 		}
 		Matrix(std::vector<Vector<T>> other) : data(other) {}
 
-		# pragma region Operators
-
 		/**
 		 * @brief Adds two matrices.
 		 * @param other The other matrix to add.
@@ -71,8 +69,6 @@ class Matrix {
 			for (Vector<T>& row : data)
 				row.scl(scalar); // Reuse Vector's scl method
 		}
-
-		# pragma endregion
 
 		# pragma region Utils
 

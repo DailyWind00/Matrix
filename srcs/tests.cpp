@@ -1,5 +1,6 @@
 #include "Matrix.hpp"
 #include "Vector.hpp"
+#include "functions.hpp"
 
 using namespace std;
 
@@ -55,4 +56,16 @@ TEST_CASE("Ex02 lerp") {
 	CHECK(lerp(u, v, 0.25f) == Vector<f32>({2.5f, 2.5f, 2.5f}));
 	CHECK(lerp(u, v, 0.75f) == Vector<f32>({7.5f, 7.5f, 7.5f}));
 	CHECK_THROWS(lerp(u, Vector<f32>({1, 2}), 0.5f)); // Mismatched sizes
+}
+
+TEST_CASE("Ex03 dot product") {
+	Vector<f32> vec1 = {1, 2, 3};
+	Vector<f32> vec2 = {4, 5, 6};
+	Vector<f32> vec3 = {0, 0, 0};
+	Vector<f32> vec4 = {1, 2};
+
+	CHECK(vec1.dot(vec2) == 32.0f); // 1*4 + 2*5 + 3*6 = 32
+	CHECK(vec1.dot(vec3) == 0.0f);  // Dot product with zero vector
+	CHECK(vec4.dot(vec4) == 5.0f);  // 1*1 + 2*2 = 5
+	CHECK_THROWS(vec1.dot(vec4));   // Mismatched sizes
 }

@@ -9,7 +9,11 @@
 # include <iostream>
 # include <cmath>
 # include <complex>
+# include <type_traits>
 # include "doctest.h"
+
+# define IS_ARITHMETIC(T) (std::is_arithmetic_v<T>)
+# define IS_COMPLEX(T) (std::is_same_v<T, std::complex<float>> || std::is_same_v<T, std::complex<double>> || std::is_same_v<T, std::complex<long double>>)
 
 using f32 = float;
 
