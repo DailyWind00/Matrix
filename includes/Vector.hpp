@@ -11,6 +11,27 @@ class Vector {
 	protected:
 		std::vector<T> data;
 
+		/**
+		 * @brief Computes the absolute value of a number.
+		 * @details Works for both real and complex numbers.
+		 * @param v The value to compute the absolute value for.
+		 * @return The absolute value of v, as a real number.
+		 * @throw std::invalid_argument If the type T is neither arithmetic nor complex.
+		 * @note Time complexity : O(1)
+		 * @note Space complexity : O(1)
+		 * @note Allowed math functions : fma, pow
+		 */
+		inline auto abs(const T& v) const {
+			using R = TO_REAL<T>;
+			
+			if constexpr (IS_ARITHMETIC(T))
+				return (v < R(0)) ? -v : v;
+			else if constexpr (IS_COMPLEX(T))
+				return std::pow(std::fma(v.real(), v.real(), v.imag() * v.imag()), R(0.5)); // sqrt(real² + imag²)
+			else
+				throw std::invalid_argument("Cannot compute abs with the given type.");
+		}
+
 	public:
 		Vector() = default;
 		Vector(const size_t& size) : data(size) {}
@@ -91,6 +112,62 @@ class Vector {
 					result += data[i] * other[i];
 			}
 				
+			return result;
+		}
+
+		/**
+		 * @brief Compute the Taxicab norm (L1 norm) of the vector.
+		 * @details The L1 norm is the sum of the absolute values of the vector's elements.
+		 * @return The L1 norm of the vector.
+		 * @note Time complexity : O(n)
+		 * @note Space complexity : O(1)
+		 * @note Allowed math functions : fma, pow
+		 */
+		auto norm_1() const {
+			using R = TO_REAL<T>;
+			R result = R(0);
+
+			for (const T& i : data)
+				result += this->abs(i);
+	
+			return result;
+		}
+
+		/**
+		 * @brief Compute the Euclidean norm (L2 norm) of the vector.
+		 * @details The L2 norm is the square root of the sum of the squares of the vector's elements.
+		 * @return The L2 norm of the vector.
+		 * @note Time complexity : O(n)
+		 * @note Space complexity : O(1)
+		 * @note Allowed math functions : fma, pow
+		 */
+		auto norm_2() const {
+			using R = TO_REAL<T>;
+			R result = R(0);
+
+			for (const T& i : data) {
+				const R a = this->abs(i); // Avoid doing fma with complex numbers
+				result = std::fma(a, a, result);
+			}
+
+			return std::pow(result, R(0.5)); // = sqrt()
+		}
+
+		/**
+		 * @brief Compute the Infinity norm (L∞ norm) of the vector.
+		 * @details The L∞ norm is the maximum absolute value of the vector's elements.
+		 * @return The L∞ norm of the vector.
+		 * @note Time complexity : O(n)
+		 * @note Space complexity : O(1)
+		 * @note Allowed math functions : fma, pow
+		 */
+		auto norm_inf() const {
+			using R = TO_REAL<T>;
+			R result = R(0);
+
+			for (const T& i : data)
+				result = std::max(result, this->abs(i));
+
 			return result;
 		}
 

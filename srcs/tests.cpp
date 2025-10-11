@@ -69,3 +69,26 @@ TEST_CASE("Ex03 dot product") {
 	CHECK(vec4.dot(vec4) == 5.0f);  // 1*1 + 2*2 = 5
 	CHECK_THROWS(vec1.dot(vec4));   // Mismatched sizes
 }
+
+TEST_CASE("Ex04 norms") {
+	Vector<f32> vec1 = {3, 4};
+	Vector<f32> vec2 = {-1, -2, -3};
+	Vector<f32> vec3 = {0, 0, 0};
+	Vector<f32> vec4 = {1, -1, 1, -1};
+
+	CHECK(vec1.norm_1() == 7.0f);               // |3| + |4| = 7
+	CHECK(vec1.norm_2() == 5.0f);               // sqrt(3² + 4²) = 5
+	CHECK(vec1.norm_inf() == 4.0f);             // max(|3|, |4|) = 4
+
+	CHECK(vec2.norm_1() == 6.0f);               // |-1| + |-2| + |-3| = 6
+	CHECK(vec2.norm_2() == f32(std::sqrt(14))); // sqrt(1² + 2² + 3²) = sqrt(14) in float
+	CHECK(vec2.norm_inf() == 3.0f);             // max(|-1|, |-2|, |-3|) = 3
+
+	CHECK(vec3.norm_1() == 0.0f);               // Zero vector
+	CHECK(vec3.norm_2() == 0.0f);
+	CHECK(vec3.norm_inf() == 0.0f);
+
+	CHECK(vec4.norm_1() == 4.0f);               // |1| + |-1| + |1| + |-1| = 4
+	CHECK(vec4.norm_2() == 2.0f);               // sqrt(1² + (-1)² + 1² + (-1)²) = sqrt(4) = 2
+	CHECK(vec4.norm_inf() == 1.0f);             // max(|1|, |-1|) = 1
+}
