@@ -71,6 +71,23 @@ Vector<T> lerp(const Vector<T>& u, const Vector<T>& v, const T& t) {
 	return result;
 }
 
+/**
+ * @brief Computes the cosine of the angle between two vectors.
+ * @details The cosine of the angle is calculated using the dot product of the vectors divided by the product of their magnitudes.
+ *          This value ranges from -1 to 1, where 1 indicates that the vectors are in the same direction, -1 indicates they are in opposite directions,
+ *          and 0 indicates they are perpendicular.
+ * @tparam T The type of the elements in the vectors.
+ * @param u The first vector.
+ * @param v The second vector.
+ * @return The cosine of the angle between the two vectors.
+ * @throw std::invalid_argument If the vectors are not of the same size.
+ * @throw std::logic_error If either vector has zero length (magnitude).
+ * @note Time complexity : O(n)
+ * @note Space complexity : O(1)
+ * @note Allowed math functions : fma
+ * 
+ * @see https://en.wikipedia.org/wiki/Cosine_similarity
+ */
 template<typename T>
 auto angle_cos(const Vector<T>& u, const Vector<T>& v) {
 	if (u.size() != v.size())
