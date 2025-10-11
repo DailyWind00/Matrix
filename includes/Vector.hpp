@@ -112,8 +112,7 @@ class Vector {
 			if (size() != other.size())
 				throw std::invalid_argument("Vectors must have the same size");
 
-			using R = TO_REAL<T>;
-			R result = R(0);
+			T result = T(0);
 
 			for (size_t i = 0; i < size(); i++) {
 				if constexpr (IS_ARITHMETIC(T)) {
