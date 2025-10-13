@@ -139,3 +139,15 @@ TEST_CASE("Ex07 linear map & Matrix multiplication") {
 	CHECK(mat3.mul_mat(mat4) == Matrix<f32>({{23, 34}, {31, 46}})); // [[23, 34], [31, 46]]
 	CHECK_THROWS(mat3.mul_mat(mat1)); // Mismatched shapes
 }
+
+TEST_CASE("Ex08 trace") {
+	Matrix<f32> mat1 = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+	Matrix<f32> mat2 = {{1, 2}, {3, 4}};
+	Matrix<f32> mat3 = {{1, 2, 3}, {4, 5, 6}};
+	Matrix<f32> mat4 = {{5}};
+
+	CHECK(mat1.trace() == 15.0f); // 1 + 5 + 9
+	CHECK(mat2.trace() == 5.0f);  // 1 + 4
+	CHECK(mat4.trace() == 5.0f);  // Single element
+	CHECK_THROWS(mat3.trace());   // Non-square matrix
+}

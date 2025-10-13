@@ -131,6 +131,27 @@ class Matrix {
 			return result;
 		}
 
+		/**
+		 * @brief Computes the trace of the matrix.
+		 * @details The trace is defined as the sum of the elements on the main diagonal (from the top left to the bottom right) of a square matrix.
+		 * @return T The trace of the matrix.
+		 * @throw std::invalid_argument If the matrix is not square.
+		 * @note Time complexity : O(n)
+		 * @note Space complexity : O(1)
+		 * @note Allowed math functions : None
+		 */
+		T trace() {
+			if (!is_square())
+				throw std::invalid_argument("Trace can only be computed on square matrix");
+
+			T result = T(0);
+
+			for (size_t i = 0; i < cols(); i++)
+				result += data[i][i];
+
+			return result;
+		}
+
 		# pragma region Utils
 
 		/**
