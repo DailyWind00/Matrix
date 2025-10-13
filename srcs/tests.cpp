@@ -134,9 +134,8 @@ TEST_CASE("Ex07 linear map & Matrix multiplication") {
 	CHECK(mat1.mul_vec(vec1) == Vector<f32>({50, 122})); // [1*7+2*8+3*9, 4*7+5*8+6*9]
 	CHECK_THROWS(mat1.mul_vec(Vector<f32>({1, 2}))); // Mismatched sizes
 
-	CHECK(mat1.mul_mat(mat2) == Matrix<f32>({{58, 64}, {139, 154}})); // [[58, 64], [139, 154]]
-	CHECK_THROWS(mat1.mul_mat(mat3)); // Mismatched shapes
-
-	CHECK(mat3.mul_mat(mat4) == Matrix<f32>({{19, 22}, {43, 50}})); // [[19, 22], [43, 50]]
+	CHECK(mat2.mul_mat(mat1) == Matrix<f32>({{58, 64}, {139, 154}})); // [[58, 64], [139, 154]]
+	CHECK(mat1.mul_mat(mat2) == Matrix<f32>({{39, 54, 69}, {49, 68, 87}, {59, 82, 105}})); // [[39, 54, 69], [49, 68, 87], [59, 82, 105]]
+	CHECK(mat3.mul_mat(mat4) == Matrix<f32>({{23, 34}, {31, 46}})); // [[23, 34], [31, 46]]
 	CHECK_THROWS(mat3.mul_mat(mat1)); // Mismatched shapes
 }

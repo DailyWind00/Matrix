@@ -98,18 +98,33 @@ class Matrix {
 			return result;
 		}
 
+		/**
+		 * @brief Multiplies the matrix by another matrix.
+		 * @details The multiplication is performed using the standard matrix multiplication algorithm.
+		 * @param other The other matrix to multiply.
+		 * @return Matrix<T> The resulting matrix.
+		 * @throw std::invalid_argument If the matrix columns do not match the other matrix rows.
+		 * @note Time complexity : O(m*n*p) matrix A rows * matrix A cols * matrix B cols
+		 * @note Space complexity : O(m*p) matrix A rows * matrix B cols
+		 * @note Allowed math functions : fma
+		 * 
+		 * @see https://en.wikipedia.org/wiki/Matrix_multiplication_algorithm
+		 * @see https://matrix.reshish.com/matrix-multiplication/
+		 */
 		Matrix<T> mul_mat(const Matrix<T>& other) {
 			if (cols() != other.rows())
 				throw std::invalid_argument("Matrix A columns must match Matrix B rows");
 
-			Matrix<T> result(cols(), other.rows());
+			Matrix<T> result(rows(), other.cols());
 
-			for (size_t c = 0; c < cols(); c++) {
-				for (size_t r = 0; r < other.rows(); r++) {
-					if constexpr (IS_ARITHMETIC(T))
-						result[c][r] = std::fma(data[c][r], other[r][c], result[c][r]);
-					else
-						result[c][r] += data[c][r] * other[r][c];
+			for (size_t c = 0; c < other.cols(); c++) {
+				for (size_t r = 0; r < rows(); r++) {
+					for (size_t k = 0; k < cols(); k++) {
+						if constexpr (IS_ARITHMETIC(T))
+							result[c][r] = std::fma(data[k][r], other[c][k], result[c][r]);
+						else
+							result[c][r] += data[k][r] * other[c][k];
+					}
 				}
 			}
 
