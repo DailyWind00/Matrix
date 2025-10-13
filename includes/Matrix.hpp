@@ -152,6 +152,24 @@ class Matrix {
 			return result;
 		}
 
+		/**
+		 * @brief Transposes the matrix.
+		 * @details The transpose of a matrix is obtained by swapping its rows with its columns.
+		 * @return Matrix<T> The transposed matrix.
+		 * @note Time complexity : O(m*n) matrix rows * matrix cols
+		 * @note Space complexity : O(m*n) matrix rows * matrix cols
+		 * @note Allowed math functions : None
+		 */
+		Matrix<T> transpose() {
+			Matrix<T> result(rows(), cols());
+
+			for (size_t c = 0; c < cols(); c++)
+				for (size_t r = 0; r < rows(); r++)
+					result[r][c] = data[c][r];
+
+			return result;
+		}
+
 		# pragma region Utils
 
 		/**

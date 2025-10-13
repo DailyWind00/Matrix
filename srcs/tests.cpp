@@ -151,3 +151,16 @@ TEST_CASE("Ex08 trace") {
 	CHECK(mat4.trace() == 5.0f);  // Single element
 	CHECK_THROWS(mat3.trace());   // Non-square matrix
 }
+
+TEST_CASE("Ex09 transpose") {
+	Matrix<f32> mat1 = {{1, 2, 3}, {4, 5, 6}};
+	Matrix<f32> mat2 = {{1, 2}, {3, 4}, {5, 6}};
+	Matrix<f32> mat3 = {{1}};
+	Matrix<f32> mat4 = {};
+
+	CHECK(mat1.transpose() == Matrix<f32>({{1, 4}, {2, 5}, {3, 6}})); // 2x3 to 3x2
+	CHECK(mat2.transpose() == Matrix<f32>({{1, 3, 5}, {2, 4, 6}}));   // 3x2 to 2x3
+	CHECK(mat3.transpose() == Matrix<f32>({{1}}));                    // 1x1 remains the same
+	CHECK(mat4.transpose() == Matrix<f32>());                         // Empty matrix remains empty
+}
+
