@@ -95,7 +95,7 @@ class Matrix {
 		 * @note Space complexity : O(n)
 		 * @note Allowed math functions : fma
 		 */
-		Vector<T> mul_vec(const Vector<T>& other) {
+		Vector<T> mul_vec(const Vector<T>& other) const {
 			if (rows() != other.size())
 				throw std::invalid_argument("Matrix rows must match vector size");
 
@@ -155,7 +155,7 @@ class Matrix {
 		 * @note Space complexity : O(1)
 		 * @note Allowed math functions : None
 		 */
-		T trace() {
+		T trace() const {
 			if (!is_square())
 				throw std::invalid_argument("Trace can only be computed on square matrix");
 
@@ -258,6 +258,10 @@ class Matrix {
 			}
 
 			return result;
+		}
+
+		T determinant() const {
+
 		}
 
 		# pragma region Utils
