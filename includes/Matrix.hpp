@@ -294,7 +294,10 @@ class Matrix {
 				for (size_t j = i+1; j < rows(); ++j) {
 					T factor = tmp.data[j][i] / tmp.data[i][i];
 					for (size_t k = i; k < rows(); ++k)
-						tmp.data[j][k] -= factor * tmp.data[i][k];
+						if constexpr (IS_ARITHMETIC(T))
+							tmp.data[j][k] = std::fma(-factor, tmp.data[i][k], tmp.data[j][k]);
+						else
+							tmp.data[j][k] -= factor * tmp.data[i][k];
 				}
 			}
 
