@@ -7,8 +7,8 @@ using namespace std;
 TEST_CASE("Ex00 Vector & Matrix add/sub/scl") {
 	Vector<f32> vec1 = {1, 2, 3};
 	Vector<f32> vec2 = {4, 5, 6};
-	Matrix<f32> mat1 = {{1, 2, 3}, {4, 5, 6}};
-	Matrix<f32> mat2 = {{7, 8, 9}, {10, 11, 12}};
+	Matrix<f32> mat1 = {{1, 4}, {2, 5}, {3, 6}};
+	Matrix<f32> mat2 = {{7, 10}, {8, 11}, {9, 12}};
 
 	vec1.add(vec2);
 	CHECK(vec1 == Vector<f32>({5, 7, 9}));
@@ -20,13 +20,13 @@ TEST_CASE("Ex00 Vector & Matrix add/sub/scl") {
 	CHECK(vec1 == Vector<f32>({2, 4, 6}));
 
 	mat1.add(mat2);
-	CHECK(mat1 == Matrix<f32>({{8, 10, 12}, {14, 16, 18}}));
-	CHECK_THROWS(mat1.add(Matrix<f32>({{1, 2}, {3, 4}}))); // Mismatched shapes
+	CHECK(mat1 == Matrix<f32>({{8, 14}, {10, 16}, {12, 18}}));
+	CHECK_THROWS(mat1.add(Matrix<f32>({{1, 3}, {2, 4}}))); // Mismatched shapes
 	mat1.sub(mat2);
-	CHECK(mat1 == Matrix<f32>({{1, 2, 3}, {4, 5, 6}}));
-	CHECK_THROWS(mat1.sub(Matrix<f32>({{1, 2}, {3, 4}}))); // Mismatched shapes
+	CHECK(mat1 == Matrix<f32>({{1, 4}, {2, 5}, {3, 6}}));
+	CHECK_THROWS(mat1.sub(Matrix<f32>({{1, 3}, {2, 4}}))); // Mismatched shapes
 	mat1.scl(2.0f);
-	CHECK(mat1 == Matrix<f32>({{2, 4, 6}, {8, 10, 12}}));
+	CHECK(mat1 == Matrix<f32>({{2, 8}, {4, 10}, {6, 12}}));
 }
 
 TEST_CASE("Ex01 linear combination") {
@@ -125,25 +125,25 @@ TEST_CASE("Ex06 cross product") {
 }
 
 TEST_CASE("Ex07 linear map & Matrix multiplication") {
-	Matrix<f32> mat1 = {{1, 2, 3}, {4, 5, 6}};
+	Matrix<f32> mat1 = {{1, 4}, {2, 5}, {3, 6}};
 	Vector<f32> vec1 = {7, 8, 9};
-	Matrix<f32> mat2 = {{7, 8}, {9, 10}, {11, 12}};
-	Matrix<f32> mat3 = {{1, 2}, {3, 4}};
-	Matrix<f32> mat4 = {{5, 6}, {7, 8}};
+	Matrix<f32> mat2 = {{7, 9, 11}, {8, 10, 12}};
+	Matrix<f32> mat3 = {{1, 3}, {2, 4}};
+	Matrix<f32> mat4 = {{5, 7}, {6, 8}};
 
-	CHECK(mat1.mul_vec(vec1) == Vector<f32>({50, 122})); // [1*7+2*8+3*9, 4*7+5*8+6*9]
+	CHECK(mat1.mul_vec(vec1) == Vector<f32>({50, 122}));
 	CHECK_THROWS(mat1.mul_vec(Vector<f32>({1, 2}))); // Mismatched sizes
 
-	CHECK(mat2.mul_mat(mat1) == Matrix<f32>({{58, 64}, {139, 154}})); // [[58, 64], [139, 154]]
-	CHECK(mat1.mul_mat(mat2) == Matrix<f32>({{39, 54, 69}, {49, 68, 87}, {59, 82, 105}})); // [[39, 54, 69], [49, 68, 87], [59, 82, 105]]
-	CHECK(mat3.mul_mat(mat4) == Matrix<f32>({{23, 34}, {31, 46}})); // [[23, 34], [31, 46]]
+	CHECK(mat2.mul_mat(mat1) == Matrix<f32>({{58, 139}, {64, 154}}));
+	CHECK(mat1.mul_mat(mat2) == Matrix<f32>({{39, 49, 59}, {54, 68, 82}, {69, 87, 105}}));
+	CHECK(mat3.mul_mat(mat4) == Matrix<f32>({{23, 31}, {34, 46}}));
 	CHECK_THROWS(mat3.mul_mat(mat1)); // Mismatched shapes
 }
 
 TEST_CASE("Ex08 trace") {
-	Matrix<f32> mat1 = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
-	Matrix<f32> mat2 = {{1, 2}, {3, 4}};
-	Matrix<f32> mat3 = {{1, 2, 3}, {4, 5, 6}};
+	Matrix<f32> mat1 = {{1, 4, 7}, {2, 5, 8}, {3, 6, 9}};
+	Matrix<f32> mat2 = {{1, 3}, {2, 4}};
+	Matrix<f32> mat3 = {{1, 4, 7}, {2, 5, 8}};
 	Matrix<f32> mat4 = {{5}};
 
 	CHECK(mat1.trace() == 15.0f); // 1 + 5 + 9
@@ -153,14 +153,37 @@ TEST_CASE("Ex08 trace") {
 }
 
 TEST_CASE("Ex09 transpose") {
-	Matrix<f32> mat1 = {{1, 2, 3}, {4, 5, 6}};
-	Matrix<f32> mat2 = {{1, 2}, {3, 4}, {5, 6}};
+	Matrix<f32> mat1 = {{1, 4}, {2, 5}, {3, 6}};
+	Matrix<f32> mat2 = {{1, 3, 5}, {2, 4, 6}};
 	Matrix<f32> mat3 = {{1}};
 	Matrix<f32> mat4 = {};
 
-	CHECK(mat1.transpose() == Matrix<f32>({{1, 4}, {2, 5}, {3, 6}})); // 2x3 to 3x2
-	CHECK(mat2.transpose() == Matrix<f32>({{1, 3, 5}, {2, 4, 6}}));   // 3x2 to 2x3
+	CHECK(mat1.transpose() == Matrix<f32>({{1, 2, 3}, {4, 5, 6}}));   // 3x2 to 2x3
+	CHECK(mat2.transpose() == Matrix<f32>({{1, 2}, {3, 4}, {5, 6}})); // 2x3 to 3x2
 	CHECK(mat3.transpose() == Matrix<f32>({{1}}));                    // 1x1 remains the same
 	CHECK(mat4.transpose() == Matrix<f32>());                         // Empty matrix remains empty
 }
 
+TEST_CASE("Ex10 row echelon form") {
+	Matrix<f32> mat1 = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
+	Matrix<f32> mat2 = {{1, 2}, {3, 4}};
+	Matrix<f32> mat3 = {{1, 2}, {2, 4}};
+	Matrix<f32> mat4 = {
+		{8,   5, -2, 4, 28},
+		{4, 2.5, 20, 4, -4},
+		{8,   5,  1, 4, 17}
+	};
+	Matrix<f32> mat5 = {{0}};
+	Matrix<f32> mat6 = {};
+
+	CHECK(mat1.row_echelon() == mat1); // Identity matrix
+	CHECK(mat2.row_echelon() == Matrix<f32>({{1, 0}, {0, 1}}));
+	CHECK(mat3.row_echelon() == Matrix<f32>({{1, 2}, {0, 0}}));
+	CHECK(mat4.row_echelon() == Matrix<f32>({
+		{1.0f, 0.625f, 0.0f, 0.0f, -12.1666667f},
+		{0.0f, 0.0f, 1.0f, 0.0f, -3.6666667f},
+		{0.0f, 0.0f, 0.0f, 1.0f, 29.5f}
+	}));
+	CHECK(mat5.row_echelon() == mat5); // Single zero element
+	CHECK(mat6.row_echelon() == mat6); // Empty matrix
+}

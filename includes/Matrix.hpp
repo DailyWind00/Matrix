@@ -20,9 +20,24 @@ class Matrix {
 					{ 0, 0, value, 0 },
 					{ 0, 0, 0, value }};
 		}
-		Matrix(std::initializer_list<Vector<T>> init) {
-			for (const auto& col : init)
-				data.emplace_back(col);
+		Matrix(std::initializer_list<Vector<T>> rows) {
+			if (!rows.size()) return;
+
+			size_t c = rows.begin()->size(); // Columns size
+			size_t r = rows.size();          // Rows size
+
+			data.assign(c, Vector<T>(r));
+
+			size_t i = 0;
+			for (const Vector<T>& row : rows) {
+				if (row.size() != c)
+					throw std::invalid_argument("All rows must have the same size.");
+
+				for (size_t j = 0; j < c; j++)
+					data[j][i] = row[j];
+					
+				i++;
+			}
 		}
 		Matrix(std::vector<Vector<T>> other) : data(other) {}
 		Matrix(const size_t& cols, const size_t& rows) : data(cols, Vector<T>(rows)) {}
@@ -168,6 +183,10 @@ class Matrix {
 					result[r][c] = data[c][r];
 
 			return result;
+		}
+
+		Matrix<T> row_echelon() const {
+			return Matrix<T>();
 		}
 
 		# pragma region Utils
