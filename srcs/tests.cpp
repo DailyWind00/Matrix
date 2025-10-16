@@ -209,3 +209,12 @@ TEST_CASE("Ex11 determinant") {
 	CHECK_THROWS(mat6.determinant());   // Non-square matrix
 }
 
+TEST_CASE("Ex12 inverse") {
+	Matrix<f32> mat1 = {{1, 2}, {5, 6}}; // Identity
+	Matrix<f32> mat2 = {{3, 4}, {7, 8}};
+
+	Matrix<f32> mat3 = (mat1 | mat2);
+
+	cout << "{" << mat3.cols() << ", " << mat3.rows() << "}" << endl;
+	cout << mat3 << endl;
+}

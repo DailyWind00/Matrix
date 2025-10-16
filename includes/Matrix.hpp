@@ -354,15 +354,46 @@ class Matrix {
 		const Vector<T>& operator[](size_t index) const { return data[index]; }
 		bool operator==(const Matrix<T>& other) const { return data == other.data; }
 
+		/**
+		 * @brief Concatenates two matrices horizontally (side-by-side).
+		 * @param other The other matrix to concatenate.
+		 * @return Matrix<T> The resulting concatenated matrix.
+		 * @throw std::invalid_argument If the matrices do not have the same number of cols.
+		 * @note Time complexity : O(n)
+		 * @note Space complexity : O(n)
+		 * @note Allowed math functions : None
+		 */
+		Matrix<T> operator|(const Matrix<T>& other) const {
+			if (rows() != other.rows())
+				throw std::invalid_argument("Matrices must have the same number of rows for horizontal concatenation.");
+
+			Matrix<T> result(cols() + other.cols(), rows());
+
+			for (size_t c = 0; c < cols(); ++c)
+				for (size_t r = 0; r < rows(); ++r)
+					result[c][r] = data[c][r];
+
+			for (size_t c = 0; c < other.cols(); ++c)
+				for (size_t r = 0; r < other.rows(); ++r)
+					result[c + cols()][r] = other[c][r];
+
+			return result;
+		}
+
 		# pragma endregion
 };
 
 template<typename T>
 std::ostream& operator<<(std::ostream& os, const Matrix<T>& mat) {
 	os << "{";
-	for (size_t i = 0; i < mat.rows(); ++i) {
-		if (i) os << ", ";
-		os << mat[i];
+	for (size_t r = 0; r < mat.rows(); ++r) {
+		if (r) os << ", ";
+		os << "[";
+		for (size_t c = 0; c < mat.cols(); ++c) {
+			if (c) os << ", ";
+			os << mat[c][r];
+		}
+		os << "]";
 	}
 	os << "}";
 	return os;
