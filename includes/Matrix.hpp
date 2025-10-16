@@ -186,7 +186,68 @@ class Matrix {
 		}
 
 		Matrix<T> row_echelon() const {
-			return Matrix<T>();
+			Matrix<T> result(*this);
+			size_t lead = 0; // Index of current leading column
+			
+			for (size_t r = 0; r < rows(); r++) {
+				if (lead >= cols())
+					break;
+
+				// Find the pivot row
+				size_t i = r;
+				while (result[lead][i] == T(0)) {
+					if (++i == rows()) {
+						i = r;
+						lead++;
+						if (lead == cols())
+							return result;
+					}
+				}
+				
+				// Swap the current row with the pivot row
+				if (i != r) {
+					for (size_t k = 0; k < cols(); k++)
+						std::swap(result[k][r], result[k][i - 1]);
+				}
+
+				// Normalize the pivot row
+				T pivot = result[lead][r];
+				if (pivot != T(0)) {
+					for (size_t k = 0; k < cols(); k++)
+						result[k][r] /= pivot;
+				}
+
+				// Eliminate all rows below the pivot
+				for (size_t j = r + 1; j < rows(); j++) {
+					T factor = result[lead][j];
+					for (size_t k = 0; k < cols(); k++)
+						result[k][j] -= factor * result[k][r];
+				}
+
+				lead++;
+			}
+
+			// Eliminate above (back substitution)
+			for (ssize_t r = rows() - 1; r >= 0; r--) {
+				// Find pivot column in row r
+				size_t pivot_col = 0;
+
+				while (pivot_col < cols() && result[pivot_col][r] == T(0))
+					++pivot_col;
+
+				if (pivot_col == cols())
+					continue;
+
+				// Eliminate above
+				for (ssize_t i = r - 1; i >= 0; --i) {
+					T factor = result[pivot_col][i];
+
+					for (size_t k = 0; k < cols(); ++k)
+						result[k][i] -= factor * result[k][r];
+				}
+			}
+
+			return result;
 		}
 
 		# pragma region Utils
