@@ -185,6 +185,16 @@ class Matrix {
 			return result;
 		}
 
+		/**
+		 * @brief Converts the matrix to its Row Echelon Form (REF).
+		 * @details The REF of a matrix is a form where all nonzero rows are above any rows of all zeros,
+		 *          and the leading coefficient (the first nonzero number from the left, also called the pivot) of a nonzero row is always strictly to the right of
+		 *          the leading coefficient of the previous row. Additionally, all entries in a column below a leading coefficient are zeros.
+		 * @return Matrix<T> The Row Echelon Form of the matrix.
+		 * @note Time complexity : O(m*n*min(m, n)) matrix rows * matrix cols * min(matrix rows, matrix cols)
+		 * @note Space complexity : O(m*n) matrix rows * matrix cols
+		 * @note Allowed math functions : None
+		 */
 		Matrix<T> row_echelon() const {
 			Matrix<T> result(*this);
 			size_t lead = 0; // Index of current leading column
