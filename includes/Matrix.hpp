@@ -260,9 +260,51 @@ class Matrix {
 			return result;
 		}
 
+		/**
+		 * @brief Computes the determinant of the matrix.
+		 * @return T The determinant of the matrix.
+		 * @throw std::invalid_argument If the matrix is not square.
+		 * @note Time complexity : O(n^3) using Gaussian elimination
+		 * @note Space complexity : O(n^2) matrix rows * matrix cols
+		 * @note Allowed math functions : None
+		 */
 		T determinant() const {
+			if (!is_square())
+				throw std::invalid_argument("Determinant can only be computed on square matrix");
 
+			if (rows() == 1) return data[0][0];
+   			if (rows() == 2) return data[0][0]*data[1][1] - data[1][0]*data[0][1];
+
+			Matrix<T> tmp = *this;
+			int swaps = 0;
+			
+			// Basic Gaussian elimination
+			for (size_t i = 0; i < rows(); ++i) {
+				if (tmp.data[i][i] == 0) {
+					// find row to swap
+					for (size_t j = i+1; j < rows(); ++j) {
+						if (tmp.data[j][i] != 0) {
+							std::swap(tmp.data[i], tmp.data[j]);
+							swaps++;
+							break;
+						}
+					}
+				}
+				// eliminate below
+				for (size_t j = i+1; j < rows(); ++j) {
+					T factor = tmp.data[j][i] / tmp.data[i][i];
+					for (size_t k = i; k < rows(); ++k)
+						tmp.data[j][k] -= factor * tmp.data[i][k];
+				}
+			}
+
+			T det = (swaps % 2 == 0) ? 1 : -1;
+			for (size_t i = 0; i < rows(); ++i)
+				det *= tmp.data[i][i];
+
+			return det;
 		}
+
 
 		# pragma region Utils
 

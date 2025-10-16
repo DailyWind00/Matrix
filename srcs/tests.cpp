@@ -187,3 +187,25 @@ TEST_CASE("Ex10 row echelon form") {
 	CHECK(mat5.row_echelon() == mat5); // Single zero element
 	CHECK(mat6.row_echelon() == mat6); // Empty matrix
 }
+
+TEST_CASE("Ex11 determinant") {
+	Matrix<f32> mat1 = {{1, -1}, {-1, 1}};
+	Matrix<f32> mat2 = {{2, 0, 0}, {0, 2, 0}, {0, 0, 2}};
+	Matrix<f32> mat3 = {{8, 5, -2}, {4, 7, 20}, {7, 6, 1}};
+	Matrix<f32> mat4 = {
+		{ 8,   5, -2, 4 },
+		{ 4, 2.5, 20, 4 },
+		{ 8,   5,  1, 4 },
+		{28,  -4, 17, 1 }
+	};
+	Matrix<f32> mat5 = {{5}};
+	Matrix<f32> mat6 = {{1, 2, 3}, {4, 5, 6}};
+
+	CHECK(mat1.determinant() == 0.0f);
+	CHECK(mat2.determinant() == 8.0f);
+	CHECK(doctest::Approx(mat3.determinant()) == -174.0f); // Need Approx due to floating-point arithmetic
+	CHECK(doctest::Approx(mat4.determinant()) == 1032.0f); // Need Approx due to floating-point arithmetic
+	CHECK(mat5.determinant() == 5.0f);  // Single element
+	CHECK_THROWS(mat6.determinant());   // Non-square matrix
+}
+
