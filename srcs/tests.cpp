@@ -210,11 +210,19 @@ TEST_CASE("Ex11 determinant") {
 }
 
 TEST_CASE("Ex12 inverse") {
-	Matrix<f32> mat1 = {{1, 2}, {5, 6}}; // Identity
-	Matrix<f32> mat2 = {{3, 4}, {7, 8}};
-
-	Matrix<f32> mat3 = (mat1 | mat2);
-
-	cout << "{" << mat3.cols() << ", " << mat3.rows() << "}" << endl;
-	cout << mat3 << endl;
+	Matrix<f32> mat1 = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
+	Matrix<f32> mat2 = {{2, 0, 0}, {0, 2, 0}, {0, 0, 2}};
+	Matrix<f32> mat3 = {{8, 5, -2}, {4, 7, 20}, {7, 6, 1}};
+	Matrix<f32> non_square = {{1, 2, 3}, {4, 5, 6}};
+	Matrix<f32> singular = {{1, 2}, {2, 4}};
+	
+	CHECK(mat1.inverse() == mat1); // Identity matrix
+	CHECK(mat2.inverse() == Matrix<f32>({{0.5f, 0.0f, 0.0f}, {0.0f, 0.5f, 0.0f}, {0.0f, 0.0f, 0.5f}}));
+	CHECK(mat3.inverse() == Matrix<f32>({
+		{0.649425287f, 0.097701149f, -0.655172414f},
+		{-0.781609195f, -0.126436782f, 0.965517241f},
+		{0.143678161f, 0.074712644f, -0.206896552f}
+	}));
+	CHECK_THROWS(non_square.inverse()); // Non-square matrix
+	CHECK_THROWS(singular.inverse()); // Singular matrix (determinant = 0)
 }

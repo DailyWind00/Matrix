@@ -12,6 +12,27 @@ class Matrix {
 	protected:
 		std::vector<Vector<T>> data;
 
+		/**
+		 * @brief Computes the absolute value of a number.
+		 * @details Works for both real and complex numbers.
+		 * @param v The value to compute the absolute value for.
+		 * @return The absolute value of v, as a real number.
+		 * @throw std::invalid_argument If the type T is neither arithmetic nor complex.
+		 * @note Time complexity : O(1)
+		 * @note Space complexity : O(1)
+		 * @note Allowed math functions : fma, pow
+		 */
+		inline auto abs(const T& v) const {
+			using R = TO_REAL<T>;
+			
+			if constexpr (IS_ARITHMETIC(T))
+				return (v < R(0)) ? -v : v;
+			else if constexpr (IS_COMPLEX(T))
+				return std::pow(std::fma(v.real(), v.real(), v.imag() * v.imag()), R(0.5)); // sqrt(real² + imag²)
+			else
+				throw std::invalid_argument("Cannot compute abs with the given type.");
+		}
+
 	public:
 		Matrix() = default;
 		Matrix(const T& value) { // Identity matrix
@@ -308,6 +329,69 @@ class Matrix {
 			return det;
 		}
 
+		/**
+		 * @brief Computes the inverse of the matrix.
+		 * @details The inverse matrix is compute using the Gauss-Jordan elimination method.
+		 * @throw std::invalid_argument If the matrix is not square.
+		 * @throw std::logic_error If the matrix is singular and cannot be inverted.
+		 * @return Matrix<T> The inverse of the matrix.
+		 * @note Time complexity : O(n^3)
+		 * @note Space complexity : O(n^2) matrix rows * matrix cols
+		 * @note Allowed math functions : None
+		 */
+		Matrix<T> inverse() const {
+			if (!is_square())
+				throw std::invalid_argument("Inverse can only be computed on square matrix.");
+
+			if (determinant() == T(0))
+				throw std::logic_error("Matrix is singular and cannot be inverted.");
+
+			size_t n = rows();
+
+			// Augment A with identity matrix [A | I]
+			Matrix<T> identity(n, n);
+			for (size_t i = 0; i < n; ++i)
+				identity[i][i] = T(1);
+
+			Matrix<T> augmented = *this | identity;
+
+			// Perform Gauss–Jordan elimination
+			for (size_t i = 0; i < n; ++i) {
+				// Find pivot
+				size_t pivot_row = i;
+				for (size_t j = i; j < n; ++j)
+					if (this->abs(augmented[i][j]) > this->abs(augmented[i][pivot_row]))
+						pivot_row = j;
+
+				if (pivot_row != i)
+					for (size_t c = 0; c < augmented.cols(); ++c)
+						std::swap(augmented[c][i], augmented[c][pivot_row]);
+
+				// Normalize pivot row
+				T pivot = augmented[i][i];
+				if (pivot == T(0))
+					throw std::logic_error("Matrix is singular during elimination.");
+
+				for (size_t c = 0; c < augmented.cols(); ++c)
+					augmented[c][i] /= pivot;
+
+				// Eliminate all other rows
+				for (size_t r = 0; r < n; ++r) {
+					if (r == i) continue;
+					T factor = augmented[i][r];
+					for (size_t c = 0; c < augmented.cols(); ++c)
+						augmented[c][r] -= factor * augmented[c][i];
+				}
+			}
+
+			// Extract inverse (right half)
+			Matrix<T> inverse(n, n);
+			for (size_t c = 0; c < n; ++c)
+				for (size_t r = 0; r < n; ++r)
+					inverse[c][r] = augmented[c + n][r];
+
+			return inverse;
+		}
 
 		# pragma region Utils
 
@@ -352,7 +436,19 @@ class Matrix {
 
 		Vector<T>& operator[](size_t index) { return data[index]; }
 		const Vector<T>& operator[](size_t index) const { return data[index]; }
-		bool operator==(const Matrix<T>& other) const { return data == other.data; }
+
+		bool operator==(const Matrix<T>& other) const {
+			if (rows() != other.rows() || cols() != other.cols())
+				return false;
+
+			const T eps = static_cast<T>(1e-5); // Tolerance for floating-point comparison
+			for (size_t c = 0; c < cols(); ++c)
+				for (size_t r = 0; r < rows(); ++r)
+					if (this->abs(data[c][r] - other[c][r]) > eps)
+						return false;
+
+			return true;
+		}
 
 		/**
 		 * @brief Concatenates two matrices horizontally (side-by-side).
