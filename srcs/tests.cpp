@@ -226,3 +226,22 @@ TEST_CASE("Ex12 inverse") {
 	CHECK_THROWS(non_square.inverse()); // Non-square matrix
 	CHECK_THROWS(singular.inverse()); // Singular matrix (determinant = 0)
 }
+
+TEST_CASE("Ex13 rank") {
+	Matrix<f32> mat1 = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
+	Matrix<f32> mat2 = {
+		{ 1, 2, 0, 0},
+		{ 2, 4, 0, 0},
+		{-1, 2, 1, 1}
+	};
+	Matrix<f32> mat3 = {
+		{ 8,  5, -2},
+		{ 4,  7, 20},
+		{ 7,  6,  1},
+		{21, 18,  7}
+	};
+
+	CHECK(mat1.rank() == 3);
+	CHECK(mat2.rank() == 2);
+	CHECK(mat3.rank() == 3);
+}

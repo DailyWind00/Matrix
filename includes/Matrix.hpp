@@ -393,6 +393,36 @@ class Matrix {
 			return inverse;
 		}
 
+		/**
+		 * @brief Computes the rank of the matrix.
+		 * @details The rank is defined as the maximum number of linearly independent row or column vectors in the matrix.
+		 *          It is computed by transforming the matrix to its Row Echelon Form (REF) and counting the number of non-zero rows.
+		 * @return size_t The rank of the matrix.
+		 * @note Time complexity : O(m*n*min(m, n)) matrix rows * matrix cols * min(matrix rows, matrix cols)
+		 * @note Space complexity : O(m*n) matrix rows * matrix cols
+		 * @note Allowed math functions : None
+		 * 
+		 * @see https://en.wikipedia.org/wiki/Rank_(linear_algebra)
+		 */
+		size_t rank() const {
+			Matrix<T> ref = row_echelon();
+			size_t result = 0;
+
+			for (size_t r = 0; r < ref.rows(); ++r) {
+				bool non_zero_row = false;
+
+				for (size_t c = 0; c < ref.cols(); ++c) {
+					if (ref[c][r] != T(0)) {
+						non_zero_row = true;
+						break;
+					}
+				}
+
+				if (non_zero_row) result++;
+			}
+			return result;
+		}
+
 		# pragma region Utils
 
 		/**
