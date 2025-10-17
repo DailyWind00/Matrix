@@ -27,16 +27,35 @@ TEST_CASE("Ex00 Vector & Matrix add/sub/scl") {
 	CHECK_THROWS(mat1.sub(Matrix<f32>({{1, 3}, {2, 4}}))); // Mismatched shapes
 	mat1.scl(2.0f);
 	CHECK(mat1 == Matrix<f32>({{2, 8}, {4, 10}, {6, 12}}));
+
+	// Bonus : Complex numbers
+
+	Vector<c32> cvec1 = { {1,1}, {2,2}, {3,3} };
+	Vector<c32> cvec2 = { {4,-1}, {5,-2}, {6,-3} };
+	Matrix<c32> cmat1 = { {{1,1}, {4,4}}, {{2,2}, {5,5}}, {{3,3}, {6,6}} };
+	Matrix<c32> cmat2 = { {{7,-1}, {10,-1}}, {{8,-2}, {11,-2}}, {{9,-3}, {12,-3}} };
+
+	cvec1.add(cvec2);
+	CHECK(cvec1 == Vector<c32>({ {5,0}, {7,0}, {9,0} }));
+	cvec1.sub(cvec2);
+	CHECK(cvec1 == Vector<c32>({ {1,1}, {2,2}, {3,3} }));
+	cvec1.scl(c32(2,0));
+	CHECK(cvec1 == Vector<c32>({ {2,2}, {4,4}, {6,6} }));
+
+	cmat1.add(cmat2);
+	CHECK(cmat1 == Matrix<c32>({ {{8,0}, {14,3}}, {{10,0}, {16,3}}, {{12,0}, {18,3}} }));
+	cmat1.sub(cmat2);
+	CHECK(cmat1 == Matrix<c32>({ {{1,1}, {4,4}}, {{2,2}, {5,5}}, {{3,3}, {6,6}} }));
+	cmat1.scl(c32(2,0));
+	CHECK(cmat1 == Matrix<c32>({ {{2,2}, {8,8}}, {{4,4}, {10,10}}, {{6,6}, {12,12}} }));
 }
 
 TEST_CASE("Ex01 linear combination") {
 	Vector<f32> vec1 = {1, 0, 0};
 	Vector<f32> vec2 = {0, 1, 0};
 	Vector<f32> vec3 = {0, 0, 1};
-
 	Vector<f32> vec4 = {1, 2, 3};
 	Vector<f32> vec5 = {0, 10, -100};
-
 	Vector<f32> vec6 = {1, 2};
 
 	CHECK(linear_combination({vec1, vec2, vec3}, {10.0f, -2.0f, 0.5f}) == Vector<f32>({10, -2, 0.5f}));
@@ -44,6 +63,20 @@ TEST_CASE("Ex01 linear combination") {
 	CHECK(linear_combination<f32>({}, {}) == Vector<f32>{});
 	CHECK_THROWS(linear_combination({vec1}, {})); // Mismatched sizes
 	CHECK_THROWS(linear_combination({vec1, vec6}, {1.0f, 2.0f})); // Mismatched vector sizes
+
+	// Bonus : Complex numbers
+
+	Vector<c32> cvec1 = {{1,1}, {0,1}, {1,0}};
+	Vector<c32> cvec2 = {{-1,2}, {2,-1}, {0,3}};
+
+	CHECK(linear_combination({cvec1, cvec2}, {c32(2,0), c32(-1,1)}) ==
+	      Vector<c32>({
+	          cvec1[0]*c32(2,0) + cvec2[0]*c32(-1,1),
+	          cvec1[1]*c32(2,0) + cvec2[1]*c32(-1,1),
+	          cvec1[2]*c32(2,0) + cvec2[2]*c32(-1,1)
+	      }));
+
+	CHECK_THROWS(linear_combination({cvec1}, {})); // Mismatched sizes
 }
 
 TEST_CASE("Ex02 lerp") {
@@ -56,6 +89,18 @@ TEST_CASE("Ex02 lerp") {
 	CHECK(lerp(u, v, 0.25f) == Vector<f32>({2.5f, 2.5f, 2.5f}));
 	CHECK(lerp(u, v, 0.75f) == Vector<f32>({7.5f, 7.5f, 7.5f}));
 	CHECK_THROWS(lerp(u, Vector<f32>({1, 2}), 0.5f)); // Mismatched sizes
+
+	// Bonus : Complex numbers
+	
+	Vector<c32> cu = {{0,0}, {1,1}, {2,0}};
+	Vector<c32> cv = {{10,0}, {11,1}, {12,0}};
+
+	CHECK(lerp(cu, cv, 0.0f) == Vector<c32>({{0,0}, {1,1}, {2,0}}));
+	CHECK(lerp(cu, cv, 1.0f) == Vector<c32>({{10,0}, {11,1}, {12,0}}));
+	CHECK(lerp(cu, cv, 0.5f) == Vector<c32>({{5,0}, {6,1}, {7,0}}));
+	CHECK(lerp(cu, cv, 0.25f) == Vector<c32>({{2.5f,0}, {3.5f,1}, {4.5f,0}}));
+	CHECK(lerp(cu, cv, 0.75f) == Vector<c32>({{7.5f,0}, {8.5f,1}, {9.5f,0}}));
+	CHECK_THROWS(lerp(cu, Vector<c32>({{1,1}, {2,2}}), 0.5f)); // Mismatched sizes
 }
 
 TEST_CASE("Ex03 dot product") {
@@ -68,6 +113,18 @@ TEST_CASE("Ex03 dot product") {
 	CHECK(vec1.dot(vec3) == 0.0f);  // Dot product with zero vector
 	CHECK(vec4.dot(vec4) == 5.0f);  // 1*1 + 2*2 = 5
 	CHECK_THROWS(vec1.dot(vec4));   // Mismatched sizes
+	
+	// Bonus: Complex numbers
+
+	Vector<c32> cvec1 = {{1,1}, {0,1}, {1,0}};
+	Vector<c32> cvec2 = {{-1,2}, {2,-1}, {0,3}};
+
+	c32 expected = cvec1[0]*std::conj(cvec2[0]) + 
+	                cvec1[1]*std::conj(cvec2[1]) + 
+	                cvec1[2]*std::conj(cvec2[2]);
+
+	CHECK(cvec1.dot(cvec2) == expected);
+	CHECK_THROWS(cvec1.dot(Vector<c32>{{1,0},{2,0}})); // Mismatched sizes
 }
 
 TEST_CASE("Ex04 norms") {
@@ -91,6 +148,19 @@ TEST_CASE("Ex04 norms") {
 	CHECK(vec4.norm_1() == 4.0f);             // |1| + |-1| + |1| + |-1| = 4
 	CHECK(vec4.norm() == 2.0f);               // sqrt(1² + (-1)² + 1² + (-1)²) = sqrt(4) = 2
 	CHECK(vec4.norm_inf() == 1.0f);           // max(|1|, |-1|) = 1
+
+	// Bonus: Complex vectors
+
+	Vector<c32> cvec1 = {{3, 4}, {1, -1}};
+	Vector<c32> cvec2 = {{-1, 2}, {0, -3}, {2, 2}};
+
+	CHECK(cvec1.norm_1() == std::abs(cvec1[0]) + std::abs(cvec1[1]));
+	CHECK(cvec1.norm() == std::sqrt(std::norm(cvec1[0]) + std::norm(cvec1[1])));
+	CHECK(cvec1.norm_inf() == std::max(std::abs(cvec1[0]), std::abs(cvec1[1])));
+
+	CHECK(cvec2.norm_1() == std::abs(cvec2[0]) + std::abs(cvec2[1]) + std::abs(cvec2[2]));
+	CHECK(cvec2.norm() == std::sqrt(std::norm(cvec2[0]) + std::norm(cvec2[1]) + std::norm(cvec2[2])));
+	CHECK(cvec2.norm_inf() == std::max({std::abs(cvec2[0]), std::abs(cvec2[1]), std::abs(cvec2[2])}));
 }
 
 TEST_CASE("Ex05 cosine") {
@@ -107,6 +177,15 @@ TEST_CASE("Ex05 cosine") {
 	CHECK(angle_cos(vec5, vec6) == 0.9746318f); // General case
 	CHECK_THROWS(angle_cos(vec1, Vector<f32>({1, 2}))); // Mismatched sizes
 	CHECK_THROWS(angle_cos(vec1, Vector<f32>({0, 0, 0}))); // Zero-length vector
+
+	// Bonus: Complex vectors
+
+	Vector<c32> cvec1 = {{1, 1}, {0, 1}, {1, 0}};
+	Vector<c32> cvec2 = {{-1, 2}, {2, -1}, {0, 3}};
+
+	CHECK(angle_cos(cvec1, cvec1) == 1.0f); // Same complex vector
+	CHECK_THROWS(angle_cos(cvec1, Vector<c32>({{0,0},{0,0},{0,0}}))); // Zero-length vector
+	CHECK_THROWS(angle_cos(cvec1, Vector<c32>({{1,0},{2,0}}))); // Mismatched sizes
 }
 
 TEST_CASE("Ex06 cross product") {
@@ -122,6 +201,17 @@ TEST_CASE("Ex06 cross product") {
 	CHECK(cross_product(vec4, vec5) == Vector<f32>({-3, 6, -3})); // General case
 	CHECK_THROWS(cross_product(vec1, Vector<f32>({1, 2}))); // Mismatched sizes
 	CHECK_THROWS(cross_product(Vector<f32>({1, 2}), Vector<f32>({1, 2}))); // Not 3D vectors
+
+	// Bonus: Complex vectors
+
+	Vector<c32> cvec1 = {{1,1}, {0,1}, {1,0}};
+	Vector<c32> cvec2 = {{-1,2}, {2,-1}, {0,3}};
+	Vector<c32> expected = {
+		cvec1[1]*cvec2[2] - cvec1[2]*cvec2[1],
+		cvec1[2]*cvec2[0] - cvec1[0]*cvec2[2],
+		cvec1[0]*cvec2[1] - cvec1[1]*cvec2[0]
+	};
+	CHECK(cross_product(cvec1, cvec2) == expected);
 }
 
 TEST_CASE("Ex07 linear map & Matrix multiplication") {
@@ -138,6 +228,19 @@ TEST_CASE("Ex07 linear map & Matrix multiplication") {
 	CHECK(mat1.mul_mat(mat2) == Matrix<f32>({{39, 49, 59}, {54, 68, 82}, {69, 87, 105}}));
 	CHECK(mat3.mul_mat(mat4) == Matrix<f32>({{23, 31}, {34, 46}}));
 	CHECK_THROWS(mat3.mul_mat(mat1)); // Mismatched shapes
+
+	// Bonus: Complex numbers
+
+	Matrix<c32> cmat1 = {{{1,1}, {2,0}}, {{0,1}, {1,2}}};
+	Matrix<c32> cmat2 = {{{-1,0}, {0,1}}, {{1,1}, {2,-1}}};
+	Vector<c32> cvec1 = {{1,0}, {0,1}};
+	
+	CHECK(cmat1.mul_vec(cvec1) == Vector<c32>({cmat1[0][0]*cvec1[0] + cmat1[1][0]*cvec1[1], cmat1[0][1]*cvec1[0] + cmat1[1][1]*cvec1[1]}));
+
+	CHECK(cmat1.mul_mat(cmat2) == Matrix<c32>({
+		{cmat1[0][0]*cmat2[0][0] + cmat1[1][0]*cmat2[0][1], cmat1[0][1]*cmat2[0][0] + cmat1[1][1]*cmat2[0][1]},
+		{cmat1[0][0]*cmat2[1][0] + cmat1[1][0]*cmat2[1][1], cmat1[0][1]*cmat2[1][0] + cmat1[1][1]*cmat2[1][1]}
+	}));
 }
 
 TEST_CASE("Ex08 trace") {

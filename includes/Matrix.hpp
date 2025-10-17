@@ -471,7 +471,9 @@ class Matrix {
 			if (rows() != other.rows() || cols() != other.cols())
 				return false;
 
-			const T eps = static_cast<T>(1e-5); // Tolerance for floating-point comparison
+			using R = TO_REAL<T>;
+			const R eps = R(1e-5); // Tolerance for floating-point comparison
+			
 			for (size_t c = 0; c < cols(); ++c)
 				for (size_t r = 0; r < rows(); ++r)
 					if (this->abs(data[c][r] - other[c][r]) > eps)

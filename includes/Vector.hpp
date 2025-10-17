@@ -120,8 +120,8 @@ class Vector {
 					result = std::fma(data[i], other[i], result);
 				}
 				else if constexpr (IS_COMPLEX(T)) {
-					// Complex numbers: conjugate the first operand, no fma
-					result += std::conj(data[i]) * other[i];
+					// Complex numbers: conjugate the second operand, no fma
+					result += data[i] * std::conj(other[i]);
 				}
 				else
 					// Fallback: generic multiply-add

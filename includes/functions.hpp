@@ -32,8 +32,12 @@ Vector<T> linear_combination(std::initializer_list<Vector<T>> vectors, std::init
         if (vecIt->size() != result.size())
             throw std::invalid_argument("All vectors must be of the same size.");
 
-        for (size_t j = 0; j < result.size(); ++j)
-            result[j] = std::fma(*scaIt, (*vecIt)[j], result[j]);
+        for (size_t j = 0; j < result.size(); ++j) {
+			if constexpr (IS_ARITHMETIC(T))
+            	result[j] = std::fma(*scaIt, (*vecIt)[j], result[j]);
+			else
+				result[j] += (*scaIt) * (*vecIt)[j];
+		}
 
         ++vecIt;
         ++scaIt;
@@ -59,14 +63,18 @@ Vector<T> linear_combination(std::initializer_list<Vector<T>> vectors, std::init
  * @see https://en.wikipedia.org/wiki/Linear_interpolation
  */
 template<typename T>
-Vector<T> lerp(const Vector<T>& u, const Vector<T>& v, const T& t) {
+Vector<T> lerp(const Vector<T>& u, const Vector<T>& v, const f32& t) {
 	if (u.size() != v.size())
 		throw std::invalid_argument("Both vectors must be of the same size.");
 
 	Vector<T> result(u.size());
 
-	for (size_t i = 0; i < u.size(); i++)
-		result[i] = std::fma(t, v[i] - u[i], u[i]);
+	for (size_t i = 0; i < u.size(); i++) {
+		if constexpr (IS_ARITHMETIC(T))
+			result[i] = std::fma(t, v[i] - u[i], u[i]);
+		else
+			result[i] = (v[i] - u[i]) * t + u[i];
+	}
 
 	return result;
 }
@@ -107,10 +115,10 @@ auto angle_cos(const Vector<T>& u, const Vector<T>& v) {
  * @brief Computes the cross product of two 3-dimensional vectors.
  * @details The cross product results in a vector that is perpendicular to both input vectors, following the right-hand rule.
  * @tparam T The type of the elements in the vectors.
- * @param u The first 3-dimensional vector.
- * @param v The second 3-dimensional vector.
+ * @param u The first 3-dimensional or 7-dimensional vector.
+ * @param v The second 3-dimensional or 7-dimensional vector.
  * @return Vector<T> The resulting vector from the cross product.
- * @throw std::invalid_argument If either vector is not 3-dimensional.
+ * @throw std::invalid_argument If either vector is not 3-dimensional or 7-dimensional.
  * @note Time complexity : O(1)
  * @note Space complexity : O(1)
  * @note Allowed math functions : fma
@@ -119,17 +127,22 @@ auto angle_cos(const Vector<T>& u, const Vector<T>& v) {
  */
 template<typename T>
 Vector<T> cross_product(const Vector<T>& u, const Vector<T>& v) {
-	if (IS_COMPLEX(T))
-		throw std::invalid_argument("Cross product exist only for real-valued vectors in 3 and 7 dimensions.");
-	if (u.size() != 3 || v.size() != 3)
-		throw std::invalid_argument("Vectors must be 3-dimensional.");
+	if ((u.size() != 3 || v.size() != 3) && (u.size() != 7 || v.size() != 7))
+		throw std::invalid_argument("Vectors must be 3-dimensional or 7-dimensional.");
 	
 	Vector<T> result(3);
 
-	result[0] = std::fma(u[1], v[2], -(u[2] * v[1])); // u1*v2 - u2*v1
-	result[1] = std::fma(u[2], v[0], -(u[0] * v[2])); // u2*v0 - u0*v2
-	result[2] = std::fma(u[0], v[1], -(u[1] * v[0])); // u0*v1 - u1*v0
-
+	if constexpr (IS_ARITHMETIC(T)) {
+		result[0] = std::fma(u[1], v[2], -(u[2] * v[1])); // u1*v2 - u2*v1
+		result[1] = std::fma(u[2], v[0], -(u[0] * v[2])); // u2*v0 - u0*v2
+		result[2] = std::fma(u[0], v[1], -(u[1] * v[0])); // u0*v1 - u1*v0
+	}
+	else {
+		result[0] = u[1] * v[2] - u[2] * v[1];
+		result[1] = u[2] * v[0] - u[0] * v[2];
+		result[2] = u[0] * v[1] - u[1] * v[0];
+	}
+	
 	return result;
 }
 
