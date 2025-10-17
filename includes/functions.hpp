@@ -132,3 +132,32 @@ Vector<T> cross_product(const Vector<T>& u, const Vector<T>& v) {
 
 	return result;
 }
+
+/**
+ * @brief Generates a perspective projection matrix.
+ * @details The projection matrix is used in 3D graphics to simulate the perspective effect, where objects farther from the camera appear smaller.
+ * @param fov The field of view angle in radians.
+ * @param ratio The aspect ratio of the viewport (width / height).
+ * @param near The distance to the near clipping plane.
+ * @param far The distance to the far clipping plane.
+ * @return Matrix<f32> The resulting perspective projection matrix.
+ * @note Time complexity : O(1)
+ * @note Space complexity : O(1)
+ * @note Allowed math functions : tan
+ * 
+ * @see https://en.wikipedia.org/wiki/Projection_matrix#Perspective_projection
+ */
+Matrix<f32> projection(f32 fov, f32 ratio, f32 near, f32 far) {
+
+	f32 fov_rad = fov * (3.14159265358979323846f / 180.0f);
+	f32 f = 1.0f / std::tan(fov_rad / 2.0f);
+
+	Matrix<f32> proj({
+		{ f / ratio, 0, 0, 0 },
+		{ 0, f, 0, 0 },
+		{ 0, 0, (far+near)/(near-far), -1 },
+		{ 0, 0, (2*far*near)/(near-far), 0 }
+	});
+
+	return proj;
+}

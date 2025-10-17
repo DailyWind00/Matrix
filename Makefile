@@ -16,6 +16,7 @@ $(NAME): $(OBJS)
 
 clean:
 	rm -f $(OBJS)
+	rm -f display_linux/proj
 
 fclean: clean
 	rm -f $(NAME)

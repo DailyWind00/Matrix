@@ -245,3 +245,16 @@ TEST_CASE("Ex13 rank") {
 	CHECK(mat2.rank() == 2);
 	CHECK(mat3.rank() == 3);
 }
+
+TEST_CASE("Bonus Ex14 projection") {
+	Matrix<f32> mat = projection(90.0f, 1.0f, 0.1f, 100.0f);
+
+	ofstream file("display_linux/proj");
+	CHECK(file.is_open());
+
+	for (size_t r = 0; r < mat.rows(); ++r) {
+		for (size_t c = 0; c < mat.cols(); ++c) {
+			file << mat[c][r] << (c + 1 == mat.cols() ? "\n" : ", ");
+		}
+	}
+}
