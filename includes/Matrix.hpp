@@ -301,10 +301,10 @@ class Matrix {
 			
 			// Basic Gaussian elimination
 			for (size_t i = 0; i < rows(); ++i) {
-				if (tmp.data[i][i] == 0) {
+				if (tmp.data[i][i] == T(0)) {
 					// find row to swap
 					for (size_t j = i+1; j < rows(); ++j) {
-						if (tmp.data[j][i] != 0) {
+						if (tmp.data[j][i] != T(0)) {
 							std::swap(tmp.data[i], tmp.data[j]);
 							swaps++;
 							break;

@@ -349,6 +349,14 @@ TEST_CASE("Ex11 determinant") {
 	CHECK(doctest::Approx(mat4.determinant()) == 1032.0f); // Need Approx due to floating-point arithmetic
 	CHECK(mat5.determinant() == 5.0f);  // Single element
 	CHECK_THROWS(mat6.determinant());   // Non-square matrix
+
+	// Bonus: Complex numbers
+	
+	Matrix<c32> cmat1 = {{{1,1}, {2,0}}, {{0,1}, {1,2}}};
+	Matrix<c32> cmat2 = {{{1,0}, {0,1}}, {{0,0}, {1,-1}}};
+	
+	CHECK(cmat1.determinant() == c32(-1, 1));
+	CHECK(cmat2.determinant() == c32(1, -1));
 }
 
 TEST_CASE("Ex12 inverse") {
