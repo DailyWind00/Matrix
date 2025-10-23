@@ -408,6 +408,18 @@ TEST_CASE("Ex13 rank") {
 	CHECK(mat1.rank() == 3);
 	CHECK(mat2.rank() == 2);
 	CHECK(mat3.rank() == 3);
+
+	// Bonus: Complex numbers
+
+	Matrix<c32> cmat1 = {{{1,1}, {2,0}}, {{0,1}, {1,2}}};
+	Matrix<c32> cmat2 = {{{1,0}, {0,1}}, {{0,0}, {1,-1}}};
+	Matrix<c32> cmat3 = {{{1,1}, {2,2}}, {{2,2}, {4,4}}};
+	Matrix<c32> cmat4 = {{{0,0}, {0,0}}, {{0,0}, {0,0}}};
+
+	CHECK(cmat1.rank() == 2);
+	CHECK(cmat2.rank() == 2);
+	CHECK(cmat3.rank() == 1);
+	CHECK(cmat4.rank() == 0);
 }
 
 TEST_CASE("Bonus Ex14 projection") {
