@@ -375,6 +375,20 @@ TEST_CASE("Ex12 inverse") {
 	}));
 	CHECK_THROWS(non_square.inverse()); // Non-square matrix
 	CHECK_THROWS(singular.inverse()); // Singular matrix (determinant = 0)
+
+	// Bonus: Complex numbers
+
+	Matrix<c32> cmat1 = {{{1,1}, {2,0}}, {{0,1}, {1,2}}};
+	Matrix<c32> cmat2 = {{{1,0}, {0,1}}, {{0,0}, {1,-1}}};
+
+	CHECK(cmat1.inverse() == Matrix<c32>({
+		{{0.5,-1.5}, {1,1}},
+		{{-0.5,0.5}, {0,-1}}
+	}));
+	CHECK(cmat2.inverse() == Matrix<c32>({
+		{{1,0}, {0.5,-0.5}},
+		{{0,0}, {0.5, 0.5}}
+	}));
 }
 
 TEST_CASE("Ex13 rank") {
