@@ -264,7 +264,7 @@ TEST_CASE("Ex08 trace") {
 	CHECK_THROWS(mat3.trace());   // Non-square matrix
 
 	// Bonus: complex numbers
-	
+
 	Matrix<c32> cmat1 = {{{1,1}, {2,0}}, {{0,1}, {1,2}}};
 	Matrix<c32> cmat2 = {{{-1,0}, {0,1}}, {{1,1}, {2,-1}}};
 
@@ -282,6 +282,14 @@ TEST_CASE("Ex09 transpose") {
 	CHECK(mat2.transpose() == Matrix<f32>({{1, 2}, {3, 4}, {5, 6}})); // 2x3 to 3x2
 	CHECK(mat3.transpose() == Matrix<f32>({{1}}));                    // 1x1 remains the same
 	CHECK(mat4.transpose() == Matrix<f32>());                         // Empty matrix remains empty
+
+	// Bonus: complex numbers
+
+	Matrix<c32> cmat1 = {{{1,1}, {2,0}}, {{0,1}, {1,2}}};
+	Matrix<c32> cmat2 = {{{-1,0}, {0,1}}, {{1,1}, {2,-1}}};
+
+	CHECK(cmat1.transpose() == Matrix<c32>({{cmat1[0][0], cmat1[0][1]}, {cmat1[1][0], cmat1[1][1]}}));
+	CHECK(cmat2.transpose() == Matrix<c32>({{cmat2[0][0], cmat2[0][1]}, {cmat2[1][0], cmat2[1][1]}}));
 }
 
 TEST_CASE("Ex10 row echelon form") {
