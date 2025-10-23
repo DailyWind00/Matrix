@@ -5,8 +5,8 @@
 using namespace std;
 
 // Tests are written using the doctest framework (the main is provided in doctest.h)
-// You can compare these tests with https://matrix.reshish.com/
-// > This website use row-major order for matrix representation, so you will need to transpose the result.
+// You can compare these tests with https://matrix.reshish.com/ or other calculators given in the tests comments.
+// > Some websites use row-major order for matrix representation, so you may need to transpose the result.
 
 TEST_CASE("Ex00 Vector & Matrix add/sub/scl") {
 	Vector<f32> vec1 = {1, 2, 3};
@@ -314,6 +314,20 @@ TEST_CASE("Ex10 row echelon form") {
 	}));
 	CHECK(mat5.row_echelon() == mat5); // Single zero element
 	CHECK(mat6.row_echelon() == mat6); // Empty matrix
+
+	// Bonus: complex numbers
+
+	Matrix<c32> cmat1 = {{{1,1}, {2,0}}, {{0,1}, {1,2}}};
+	Matrix<c32> cmat2 = {{{1,1}, {2,0}}, {{2,2}, {4,0}}};
+
+	CHECK(cmat1.row_echelon() == Matrix<c32>({
+		{{1,0}, {0,0}},
+		{{0,0}, {1,0}}
+	})); // https://www.emathhelp.net/calculators/linear-algebra/reduced-row-echelon-form-rref-calculator/?i=%5B%5B1%2Bi%2C2%5D%2C%5Bi%2C1%2B2i%5D%5D&reduced=on
+	CHECK(cmat2.row_echelon() == Matrix<c32>({
+		{{1,0}, {1,-1}},
+		{{0,0}, {0,0}}
+	})); // https://www.emathhelp.net/calculators/linear-algebra/reduced-row-echelon-form-rref-calculator/?i=%5B%5B1%2Bi%2C2%5D%2C%5B2%2B2i%2C4%5D%5D&reduced=on
 }
 
 TEST_CASE("Ex11 determinant") {
