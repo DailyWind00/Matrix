@@ -262,6 +262,14 @@ TEST_CASE("Ex08 trace") {
 	CHECK(mat2.trace() == 5.0f);  // 1 + 4
 	CHECK(mat4.trace() == 5.0f);  // Single element
 	CHECK_THROWS(mat3.trace());   // Non-square matrix
+
+	// Bonus: complex numbers
+	
+	Matrix<c32> cmat1 = {{{1,1}, {2,0}}, {{0,1}, {1,2}}};
+	Matrix<c32> cmat2 = {{{-1,0}, {0,1}}, {{1,1}, {2,-1}}};
+
+	CHECK(cmat1.trace() == (cmat1[0][0] + cmat1[1][1])); // Sum of diagonal
+	CHECK(cmat2.trace() == (cmat2[0][0] + cmat2[1][1]));
 }
 
 TEST_CASE("Ex09 transpose") {
