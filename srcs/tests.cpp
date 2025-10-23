@@ -4,6 +4,10 @@
 
 using namespace std;
 
+// Tests are written using the doctest framework (the main is provided in doctest.h)
+// You can compare these tests with https://matrix.reshish.com/
+// > This website use row-major order for matrix representation, so you will need to transpose the result.
+
 TEST_CASE("Ex00 Vector & Matrix add/sub/scl") {
 	Vector<f32> vec1 = {1, 2, 3};
 	Vector<f32> vec2 = {4, 5, 6};
@@ -235,12 +239,17 @@ TEST_CASE("Ex07 linear map & Matrix multiplication") {
 	Matrix<c32> cmat2 = {{{-1,0}, {0,1}}, {{1,1}, {2,-1}}};
 	Vector<c32> cvec1 = {{1,0}, {0,1}};
 	
-	CHECK(cmat1.mul_vec(cvec1) == Vector<c32>({cmat1[0][0]*cvec1[0] + cmat1[1][0]*cvec1[1], cmat1[0][1]*cvec1[0] + cmat1[1][1]*cvec1[1]}));
+	CHECK(cmat1.mul_vec(cvec1) == Vector<c32>({
+		cmat1[0][0]*cvec1[0] + cmat1[0][1]*cvec1[1], // (1+i) * 1 + i x i = i
+		cmat1[1][0]*cvec1[0] + cmat1[1][1]*cvec1[1]  // 2 x 1 + (1+2i) x i = i
+	})); // --> {[0, 1], [0, 1]}
+
 
 	CHECK(cmat1.mul_mat(cmat2) == Matrix<c32>({
-		{cmat1[0][0]*cmat2[0][0] + cmat1[1][0]*cmat2[0][1], cmat1[0][1]*cmat2[0][0] + cmat1[1][1]*cmat2[0][1]},
-		{cmat1[0][0]*cmat2[1][0] + cmat1[1][0]*cmat2[1][1], cmat1[0][1]*cmat2[1][0] + cmat1[1][1]*cmat2[1][1]}
+		{ cmat1[0][0]*cmat2[0][0] + cmat1[1][0]*cmat2[0][1], cmat1[0][0]*cmat2[1][0] + cmat1[1][0]*cmat2[1][1] }, // column 0
+		{ cmat1[0][1]*cmat2[0][0] + cmat1[1][1]*cmat2[0][1], cmat1[0][1]*cmat2[1][0] + cmat1[1][1]*cmat2[1][1] }  // column 1
 	}));
+
 }
 
 TEST_CASE("Ex08 trace") {
